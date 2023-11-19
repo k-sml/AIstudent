@@ -6,3 +6,4 @@ aiomysql
 alembic
 python-dotenv
 cryptography
+pydantic
