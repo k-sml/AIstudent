@@ -2,17 +2,22 @@ from sqlalchemy import create_engine
 import sys
 from sqlalchemy.orm import (sessionmaker, relationship, scoped_session)
 from sqlalchemy.ext.declarative import declarative_base
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 # .pycファイルの生成を防ぐ
 sys.dont_write_bytecode = True
 
 #setting db connection
-url = "mysql://root:test@db:3306/test?schema=public"
-#dbエンジンの作成
-engine = create_engine(url, echo=False, pool_recycle=10)
+url = os.getenv('DATABASE_URL')
+#dbエンジンの作成(開発時はechoをTrueにしてログ確認)
+engine = create_engine(url, echo=True, pool_recycle=1800)
 
 #create session
 SessionClass = sessionmaker(engine)
 session = SessionClass()
 
-s
+
+Base = declarative_base()
+

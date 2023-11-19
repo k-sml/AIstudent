@@ -1,16 +1,12 @@
 import datetime
 import uuid
 import sys
-from sqlalchemy import (Column, String, Text, ForeignKey, CHAR, VARCHAR, INT, \
-                        create_engine, MetaData, DECIMAL, DateTime, exc, event, Index, \
-                        and_)
-from sqlalchemy.ext.declarative import declarative_base
-from databases import Base
+from sqlalchemy import Column, CHAR, VARCHAR, DateTime
 # .pycファイルの生成を防ぐ
 sys.dont_write_bytecode = True
+from databases import Base
 
-
-class User(base):
+class User(Base):
     __tablename__ = 'user'
     id = Column(CHAR(36), primary_key=True) # CHARは固定長
     name = Column(VARCHAR(255)) # VARCHARは可変長(VARIABLEの略)
