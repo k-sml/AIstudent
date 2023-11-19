@@ -1,21 +1,17 @@
 import datetime
 import uuid
 import sys
-from sqlalchemy import (Column, String, Text, ForeignKey, CHAR, VARCHAR, INT, \
-                        create_engine, MetaData, DECIMAL, DateTime, exc, event, Index, \
-                        and_)
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Text, ForeignKey, CHAR, INT, DateTime
 from databases import Base
 
 # .pycファイルの生成を防ぐ
 sys.dont_write_bytecode = True
 
-
-class Feedback(base):
+class Feedback(Base):
     __tablename__ = 'feedback'
     id = Column(CHAR(36), primary_key=True)
     user_id = Column(CHAR(36), ForeignKey('user.id'))
-    topic_id = Column(CHAR(36), ForeignKey('user.id'))
+    topic_id = Column(CHAR(36), ForeignKey('topic.id'))
     content = Column(Text)
     score = Column(INT)
     created_at = Column(DateTime)
