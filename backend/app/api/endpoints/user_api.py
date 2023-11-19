@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from ...crud.user_crud import select_all_user, create_user, delete_user, select_user, update_user
-from ...schemas.user_schema import UserCreate, User
+from crud.user_crud import select_all_user, create_user, delete_user, select_user, update_user
+from schemas.user_schema import UserCreate, User
 from typing import List
 
 router = APIRouter()

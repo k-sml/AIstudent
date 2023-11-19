@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 const LogIn: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-z
+  const router = useRouter();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // ここで新規登録処理を実装します

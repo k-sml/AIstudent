@@ -12,6 +12,7 @@ class User(Base):
     name = Column(VARCHAR(255)) # VARCHARは可変長(VARIABLEの略)
     email = Column(VARCHAR(255))
     password = Column(VARCHAR(255))
+    status = Column(VARCHAR(255))
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
     
