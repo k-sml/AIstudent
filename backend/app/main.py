@@ -16,7 +16,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 app.include_router(user_api.router, prefix="/api")
 
-origins = ['http://localhost:12012']
+origins = ['http://localhost:3000']
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,5 +27,8 @@ app.add_middleware(
 )
 
 @app.get('/')
+def Hello():
+    return { 'message': 'Hello World' }
+@app.post('api/users')
 def Hello():
     return { 'message': 'Hello World' }

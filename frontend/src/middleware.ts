@@ -16,4 +16,4 @@ export default withAuth(
   }
 )
 
-export const config = { matcher: ["/((?!api|signup|login).*)"] }
+export const config = { matcher: ["/((?!api|signup|login|test).*)"] }
