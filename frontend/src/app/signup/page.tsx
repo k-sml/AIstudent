@@ -2,17 +2,42 @@
 import React, { useState } from 'react';
 import { Container, CssBaseline, Box, Typography, TextField, Button, Avatar, Grid, Link } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation'
 
-const LogIn: React.FC = () => {
+const SignUp: React.FC = () => {
+  const [username, setUsername] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const router = useRouter();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+ 
     // ここで新規登録処理を実装します
-    console.log(email, password);
-    // 新規登録APIへのリクエストなど
+    try {
+      await signIn("credentials", {
+        redirect: false,
+        email: email,
+        password: password,
+      }).then((res) => {
+        if (res?.error) {
+          console.log(res.error);
+
+        } else {
+          router.push("/lecture");
+        }
+      });
+    } catch (err) {
+      console.log(err);
+
+    }
   };
+    console.log(username, email, password);
+    // 新規登録APIへのリクエストなど
+  
+
+  
 
   return (
     <Container component="main" maxWidth="xs">
@@ -29,10 +54,11 @@ const LogIn: React.FC = () => {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          ログイン
+          新規登録
         </Typography>
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
+           
             <Grid item xs={12}>
               <TextField
                 required
@@ -65,12 +91,20 @@ const LogIn: React.FC = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            ログイン
+            登録
           </Button>
+          <Button
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            onClick={() => signIn('google', {}, { prompt: 'login' })} // Googleでサインイン
+            >
+            Googleでサインイン
+            </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href="/login" variant="body2">
-                アカウントを持っていない場合はこちら
+              <Link href="/auth/login" variant="body2">
+                すでにアカウントを持っている場合はこちら
               </Link>
             </Grid>
           </Grid>
@@ -80,4 +114,4 @@ const LogIn: React.FC = () => {
   );
 };
 
-export default LogIn;
+export default SignUp;

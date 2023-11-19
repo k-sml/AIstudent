@@ -2,10 +2,9 @@
 import React from 'react';
 import { Box, Button, Typography, Container } from '@mui/material';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
+
 
 export default function App() {
-  const { data: session } = useSession();
 
   return (
     <Container component="main" maxWidth="xs">
@@ -17,20 +16,13 @@ export default function App() {
           alignItems: 'center',
         }}
       >
-        {session && (
-          <>
-            <div>
-              <h1>ようこそ、{session.user && session.user.email}</h1>
-            </div>
-          </>
-        )}
-        {!session ? (
+
           <>
             <Typography component="h1" variant="h5">
               ようこそ
             </Typography>
             <Box sx={{ mt: 3 }}>
-              <Link href="/auth/signup" passHref>
+              <Link href="/signup" passHref>
                 <Button
                   fullWidth
                   variant="outlined"
@@ -63,7 +55,7 @@ export default function App() {
               </Button>
             </Link>
           </Box>
-        )}
+        )
       </Box>
     </Container>
   );
