@@ -5,7 +5,7 @@ class UserCreate(BaseModel):
     email: str
     password: str
 
-class User(BaseModel):
+class UserResponseModel(BaseModel):
     id: int
     name: str
     email: str

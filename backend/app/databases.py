@@ -15,9 +15,9 @@ url = os.getenv('DATABASE_URL')
 engine = create_engine(url, echo=True, pool_recycle=1800)
 
 #create session
-SessionClass = sessionmaker(engine)
-session = SessionClass()
-
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
+def create_new_session():
+    return SessionLocal()

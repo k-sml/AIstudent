@@ -8,6 +8,8 @@ services:
     build: .
     ports:
       - 8000:8000
+    environment:
+      - DATABASE_URL=mysql+pymysql://root:test@db:3306/test?charset=utf8
     depends_on:
       - db
   db:
