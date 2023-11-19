@@ -2,17 +2,16 @@
 import React, { useState } from 'react';
 import { Container, CssBaseline, Box, Typography, TextField, Button, Avatar, Grid, Link } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
-const SignUp: React.FC = () => {
-  const [username, setUsername] = useState<string>('');
+const LogIn: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-
+z
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // ここで新規登録処理を実装します
-    console.log(username, email, password);
+    console.log(email, password);
     // 新規登録APIへのリクエストなど
   };
 
@@ -31,23 +30,10 @@ const SignUp: React.FC = () => {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          新規登録
+          ログイン
         </Typography>
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                autoComplete="username"
-                name="username"
-                required
-                fullWidth
-                id="username"
-                label="ユーザ名"
-                autoFocus
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </Grid>
             <Grid item xs={12}>
               <TextField
                 required
@@ -80,20 +66,12 @@ const SignUp: React.FC = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            登録
+            ログイン
           </Button>
-          <Button
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-            onClick={() => signIn('google')} // Googleでサインイン
-            >
-            Googleでサインイン
-            </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href="/auth/login" variant="body2">
-                すでにアカウントを持っている場合はこちら
+              <Link href="/login" variant="body2">
+                アカウントを持っていない場合はこちら
               </Link>
             </Grid>
           </Grid>
@@ -103,4 +81,4 @@ const SignUp: React.FC = () => {
   );
 };
 
-export default SignUp;
+export default LogIn;

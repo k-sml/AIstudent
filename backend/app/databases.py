@@ -18,4 +18,6 @@ engine = create_engine(url, echo=True, pool_recycle=1800)
 SessionClass = sessionmaker(engine)
 session = SessionClass()
 
+
 Base = declarative_base()
+
