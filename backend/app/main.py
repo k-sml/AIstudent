@@ -26,9 +26,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get('/')
 def Hello():
     return { 'message': 'Hello World' }
-@app.post('api/users')
-def Hello():
-    return { 'message': 'Hello World' }
+

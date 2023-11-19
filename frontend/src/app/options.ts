@@ -18,6 +18,7 @@ export const options: NextAuthOptions = {
                         email: { label: 'email', type: 'email', placeholder: 'メールアドレス' },
                         password: { label: 'password', type: 'password' },
                         name: { label: 'name', type: 'text' },
+
                     },
                     // メルアド認証処理
               
@@ -27,6 +28,7 @@ export const options: NextAuthOptions = {
                             const body = { name: credentials?.name, email: credentials?.email, password: credentials?.password };
                             console.log(body);
                             const res = await apiClient.post('/api/users',body);
+
                             console.log(res.data);
                             return {id: res.data.id, name: res.data.email, email: res.data.email, role: "admin"}
                         }catch (e) {
