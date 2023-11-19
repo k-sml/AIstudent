@@ -2,6 +2,7 @@ import type {NextAuthOptions} from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
+import apiClient from "@/lib/apiClient";
 
 export const options: NextAuthOptions = {
         debug: true,
@@ -16,22 +17,18 @@ export const options: NextAuthOptions = {
                     credentials: {
                         email: { label: 'email', type: 'email', placeholder: 'メールアドレス' },
                         password: { label: 'password', type: 'password' },
+                        name: { label: 'username', type: 'text' },
                     },
                     // メルアド認証処理
               
                     async authorize(credentials) {
-                        const users = [
-                            {id: "1", email: "user1@example.com", password: "password1"},
-                            {id: "2", email: "user2@example.com", password: "password2"},
-                            {id: "3", email: "abc@abc", password: "123"},
-                        ];
                         console.log("入りました");
-
-                        const user = users.find(user => user.email === credentials?.email);
-
-                        if (user && user?.password === credentials?.password) {
-                            return {id: user.id, name: user.email, email: user.email, role: "admin"};
-                        } else {
+                        try {
+                            const res = await apiClient.post('/api/users', credentials);
+                            console.log(res.data);
+                            return {id: res.data.id, name: res.data.email, email: res.data.email, role: "admin"}
+                        }catch (e) {
+                            console.log(e);
                             return null;
                         }
                     }
