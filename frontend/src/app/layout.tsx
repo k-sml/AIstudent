@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Header from '../components/Header'
-import Providers from './providers'
+
+
 const inter = Inter({ subsets: ['latin'] })
 
 // SEOやページの説明に影響を与えるところ
@@ -19,9 +20,7 @@ export default function RootLayout({
     <html lang="ja">
       <body className={inter.className}>
         <Header />
-        <main>
-          <Providers>{children}</Providers>
-        </main>
+       {children}
       </body>
     </html>
   )
