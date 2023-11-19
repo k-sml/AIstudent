@@ -20,4 +20,4 @@ services:
       - ./mysql/my.conf:/etc/mysql/conf.d/my.cnf
     environment:
       - MYSQL_ROOT_PASSWORD=test
-      - MYQL_DATABASE=test
+      - MYSQL_DATABASE=test
