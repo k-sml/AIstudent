@@ -14,7 +14,7 @@ services:
     image: mysql:8.0
     container_name: aistudent-db
     ports:
-      - 3307:3307
+      - 3306:3306
     volumes:
       - ./data:/docker-entrypoint-initdb.d/
       - ./mysql/my.conf:/etc/mysql/conf.d/my.cnf

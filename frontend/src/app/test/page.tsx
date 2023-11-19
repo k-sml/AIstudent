@@ -1,19 +1,26 @@
 'use client'
-import React, { useEffect } from 'react'
-import apiClient from '@/lib/apiClient'
+import React, { useEffect } from 'react';
+import apiClient from '@/lib/apiClient';
+import Button from '@mui/material/Button';
 
-useEffect(() => {
-  const testData = async() => {
-    const response = await apiClient.get('/Hello');   
-  }
-}, [])
 
-const page = () => {
+const Page = () => {
+  useEffect(() => {
+    const testData = async () => {
+      const response = await apiClient.get('/');
+      console.log(response);
+    };
+    testData();
+  }, []);
+
   return (
     <div>
+      <Button color="inherit" >
+          新規講義
+        </Button>
       
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default Page;

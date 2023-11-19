@@ -1,5 +1,5 @@
 # ベースイメージの指定
-FROM python:3.8
+FROM python:3.9-slim
 
 WORKDIR /app
 
