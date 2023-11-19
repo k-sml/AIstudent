@@ -17,14 +17,18 @@ export const options: NextAuthOptions = {
                     credentials: {
                         email: { label: 'email', type: 'email', placeholder: 'メールアドレス' },
                         password: { label: 'password', type: 'password' },
-                        name: { label: 'username', type: 'text' },
+                        name: { label: 'name', type: 'text' },
+
                     },
                     // メルアド認証処理
               
                     async authorize(credentials) {
                         console.log("入りました");
                         try {
-                            const res = await apiClient.post('/api/users', credentials);
+                            const body = { name: credentials?.name, email: credentials?.email, password: credentials?.password };
+                            console.log(body);
+                            const res = await apiClient.post('/api/users',body);
+
                             console.log(res.data);
                             return {id: res.data.id, name: res.data.email, email: res.data.email, role: "admin"}
                         }catch (e) {

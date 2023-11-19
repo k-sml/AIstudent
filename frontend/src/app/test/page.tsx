@@ -5,13 +5,13 @@ import Button from '@mui/material/Button';
 
 
 const Page = () => {
-  // useEffect(() => {
-  //   const testData = async () => {
-  //     const response = await apiClient.get('/');
-  //     console.log(response);
-  //   };
-  //   testData();
-  // }, []);
+  useEffect(() => {
+    const testData = async () => {
+      const response = await apiClient.get('/');
+      console.log(response);
+    };
+    testData();
+  }, []);
 
   return (
     <div>

@@ -20,7 +20,7 @@ const SignUp: React.FC = () => {
         redirect: false,
         email: email,
         password: password,
-        name: username,
+        name:username,
       }).then((res) => {
         if (res?.error) {
           console.log(res.error);
@@ -34,8 +34,7 @@ const SignUp: React.FC = () => {
 
     }
   };
-    // 新規登録APIへのリクエストなど
-  
+
 
   
 
@@ -58,7 +57,8 @@ const SignUp: React.FC = () => {
         </Typography>
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+
+          <Grid item xs={12}>            
               <TextField
                 autoComplete="username"
                 name="username"
