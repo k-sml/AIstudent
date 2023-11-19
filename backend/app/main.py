@@ -1,10 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import sys
+from databases import engine
 
 # .pycファイルの生成を防ぐ
 sys.dont_write_bytecode = True
-
+#models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 origins = ['http://localhost:12012']
