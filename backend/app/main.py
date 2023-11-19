@@ -14,9 +14,8 @@ sys.dont_write_bytecode = True
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-app.include_router(user_api.router, prefix="/api")
 
-origins = ['http://localhost:3000']
+origins = ['http://localhost:12012']
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,6 +24,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.include_router(user_api.router, prefix="/api")
 
 
 @app.get('/')
