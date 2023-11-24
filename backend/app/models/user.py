@@ -2,13 +2,16 @@ import datetime
 import uuid
 import sys
 from sqlalchemy import Column, CHAR, VARCHAR, DateTime
+
+from models.topic import Topic
+
 from sqlalchemy.orm import relationship
 # .pycファイルの生成を防ぐ
 sys.dont_write_bytecode = True
 from databases import Base
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = 'users_table'
     id = Column(CHAR(36), primary_key=True) # CHARは固定長
     name = Column(VARCHAR(255)) # VARCHARは可変長(VARIABLEの略)
     email = Column(VARCHAR(255))
@@ -16,7 +19,7 @@ class User(Base):
     status = Column(VARCHAR(255))
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
-    
+
     topic = relationship('Topic', backref='users')
     evaluation = relationship('Evaluation', backref='users')
     answer = relationship('Answer', backref='answers')

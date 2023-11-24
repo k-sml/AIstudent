@@ -6,4 +6,6 @@ up-local:
 
 down-local:
 	docker-compose down
-
+	
+migrate:
+	docker container exec -it aistudent-fastapi bash -c "python main.py"
