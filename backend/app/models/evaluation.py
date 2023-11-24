@@ -8,10 +8,10 @@ from databases import Base
 sys.dont_write_bytecode = True
 
 class Evaluation(Base):
-    __tablename__ = "evaluations"
+    __tablename__ = "evaluations_table"
     id = Column(CHAR(36), primary_key=True)
-    user_id = Column(CHAR(36), ForeignKey("users.id"))
-    topic_id = Column(CHAR(36), ForeignKey("topics.id"))
+    user_id = Column(CHAR(36), ForeignKey("users_table.id"))
+    topic_id = Column(CHAR(36), ForeignKey("topics_table.id"))
     score = Column(Integer)
     created_at = Column(DateTime)
 

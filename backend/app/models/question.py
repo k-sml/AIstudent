@@ -8,13 +8,13 @@ from databases import Base
 sys.dont_write_bytecode = True
 
 class Question(Base):
-    __tablename__ = 'questions'
+    __tablename__ = 'questions_table'
     id = Column(CHAR(36), primary_key=True)
-    topic_id = Column(CHAR(36), ForeignKey('topics.id'))
+    topic_id = Column(CHAR(36), ForeignKey('topics_table.id'))
     content = Column(Text)
     created_at = Column(DateTime)
     
-    answer = relationship("Answer", backref="questions")
+    answer = relationship("Answer", backref="questions_table")
     
     def __init__(self):
         self.id = str(uuid.uuid4())
