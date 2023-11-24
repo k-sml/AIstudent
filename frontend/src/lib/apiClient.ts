@@ -6,6 +6,7 @@ const apiClient = axios.create({
     headers:{
         "Content-Type":"application/json",//json形式で送るため`
         'X-Requested-With': 'XMLHttpRequest'
+        
 
     },
     responseType: 'json'
