@@ -11,7 +11,7 @@ sys.dont_write_bytecode = True
 from databases import Base
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = 'users_table'
     id = Column(CHAR(36), primary_key=True) # CHARは固定長
     name = Column(VARCHAR(255)) # VARCHARは可変長(VARIABLEの略)
     email = Column(VARCHAR(255))
@@ -19,10 +19,8 @@ class User(Base):
     status = Column(VARCHAR(255))
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
-    topics = relationship('topic', back_populates='user')
-    
     topic = relationship('Topic', back_populates='users')
-    evaluation = relationship('Evaluation', back_populates='users')
+    # evaluation = relationship('Evaluation', back_populates='users')
     
     
     def __init__(self):
