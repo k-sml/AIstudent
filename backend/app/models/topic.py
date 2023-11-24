@@ -24,4 +24,5 @@ class Topic(Base):
     def __init__(self):
         self.id = str(uuid.uuid4())
 
-Index('explain_content', Topic.explain, mysql_length=400)
+
+Index('topic_explain', Topic.explain, mysql_length=400)
