@@ -5,12 +5,14 @@ from databases import create_new_session
 # .pycファイルの生成を防ぐ
 sys.dont_write_bytecode = True
 # トピックを追加する関数
-def create_topic(topic_title, topic_explain, topic_target,user_id):
+def create_topic(topic_title, topic_explain, topic_target,user_id,topic_first_prompt,topic_first_header):
     session = create_new_session()
     topic = Topic()
     topic.title = topic_title
     topic.explain = topic_explain
     topic.target = topic_target
+    topic.first_prompt = topic_first_prompt
+    topic.first_header = topic_first_header
     topic.user_id = user_id
     session.add(topic)
     session.commit()
@@ -29,6 +31,6 @@ def select_topic(topic_id):
     session = create_new_session()
     topic = session.query(Topic).filter(Topic.id == topic_id).first()     
     if topic == None:
-        topic = ""
+        topic = "aaaa"
     return topic
 
