@@ -4,8 +4,9 @@ import sys
 from databases import engine, Base
 from models.user import User
 from models.topic import Topic
-from models.feedback import Feedback
-from models.interaction import Interaction
+from models.question import Question
+from models.answer import Answer
+from models.evaluation import Evaluation
 from api.endpoints import user_api
 
 # .pycファイルの生成を防ぐ
@@ -15,7 +16,7 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-origins = ['http://localhost:12012']
+origins = ['http://localhost:3000']
 
 app.add_middleware(
     CORSMiddleware,
