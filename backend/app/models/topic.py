@@ -14,9 +14,8 @@ class Topic(Base):
     title = Column(VARCHAR(255))
     explain = Column(Text)
     
-    user = relationship('User', back_populates='topics')
-    question = relationship('Question', back_populates='topics')
-    evaluation = relationship('Evaluation', back_populates='topics')
+    question = relationship('Question', backref='topics')
+    evaluation = relationship('Evaluation', backref='topics')
     
     def __init__(self):
         self.id = str(uuid.uuid4())

@@ -17,9 +17,9 @@ class User(Base):
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
     
-    topic = relationship('Topic', back_populates='users')
-    evaluation = relationship('Evaluation', back_populates='users')
-    
+    topic = relationship('Topic', backref='users')
+    evaluation = relationship('Evaluation', backref='users')
+    answer = relationship('Answer', backref='answers')
     
     def __init__(self):
         self.id = str(uuid.uuid4())

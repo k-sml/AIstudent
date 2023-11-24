@@ -15,9 +15,6 @@ class Evaluation(Base):
     score = Column(Integer)
     created_at = Column(DateTime)
 
-    user = relationship("User", back_populates="evaluations")
-    topic = relationship("Topic", back_populates="evaluations")
-    
     def __init__(self):
         self.id = str(uuid.uuid4())
         self.created_at = datetime.datetime.now()

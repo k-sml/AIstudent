@@ -15,7 +15,7 @@ def create_question(title, explain, target):
     question = Question()
     question.content = prompt
     question.created_at = datetime.datetime.now()
-    session.add()
+    session.add(prompt)
     session.commit()
     return 0
 
