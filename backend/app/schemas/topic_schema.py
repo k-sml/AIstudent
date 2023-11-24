@@ -6,6 +6,7 @@ class TopicCreate(BaseModel):
     target: str
     user_id: str
     
+    
 
 class TopicResponseModel(BaseModel):
     id: str
