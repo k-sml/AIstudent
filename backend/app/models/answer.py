@@ -8,10 +8,10 @@ from databases import Base
 sys.dont_write_bytecode = True
 
 class Answer(Base):
-    __tablename__ = 'answers'
+    __tablename__ = 'answers_table'
     id = Column(CHAR(36), primary_key=True)
-    question_id = Column(CHAR(36), ForeignKey('questions.id'))
-    user_id = Column(CHAR(36), ForeignKey('users.id'))
+    question_id = Column(CHAR(36), ForeignKey('questions_table.id'))
+    user_id = Column(CHAR(36), ForeignKey('users_table.id'))
     content = Column(Text, index=True)
     created_at = Column(DateTime)
 

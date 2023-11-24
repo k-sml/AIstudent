@@ -12,15 +12,14 @@ sys.dont_write_bytecode = True
 class Topic(Base):
     __tablename__ = 'topics_table'
     id = Column(CHAR(36), primary_key=True)
-    user_id = Column(CHAR(36), ForeignKey('users.id'))
+    user_id = Column(CHAR, ForeignKey('users_table.id'))
     title = Column(VARCHAR(255))
     explain = Column(Text)
     # Enum型を使用してtarget属性を追加
     target = Column(Enum('student', 'professional', 'people', 'god'))
-    user_id = Column(CHAR, ForeignKey('users_table.id'))
     
-    question = relationship('Question', backref='topics')
-    evaluation = relationship('Evaluation', backref='topics')
+    question = relationship('Question', backref='topics_table')
+    evaluation = relationship('Evaluation', backref='topics_table')
     
     def __init__(self):
         self.id = str(uuid.uuid4())
