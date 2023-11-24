@@ -28,7 +28,6 @@ def select_user_topic(user_id):
 def select_topic(topic_id):
     session = create_new_session()
     topic = session.query(Topic).filter(Topic.id == topic_id).first()     
-    print(topic)      
     if topic == None:
         topic = ""
     return topic
