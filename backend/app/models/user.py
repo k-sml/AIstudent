@@ -2,6 +2,9 @@ import datetime
 import uuid
 import sys
 from sqlalchemy import Column, CHAR, VARCHAR, DateTime
+
+from models.topic import Topic
+
 from sqlalchemy.orm import relationship
 # .pycファイルの生成を防ぐ
 sys.dont_write_bytecode = True
@@ -16,6 +19,7 @@ class User(Base):
     status = Column(VARCHAR(255))
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
+    topics = relationship('topic', back_populates='user')
     
     topic = relationship('Topic', back_populates='users')
     evaluation = relationship('Evaluation', back_populates='users')

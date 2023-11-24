@@ -7,3 +7,5 @@ up-local:
 down-local:
 	docker-compose down
 
+db-migrate-local:
+	docker-compose exec aistudent-fastapi python databases.py
