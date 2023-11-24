@@ -1,7 +1,7 @@
 import datetime
 import uuid
 import sys
-from sqlalchemy import Column, Text, ForeignKey, CHAR, DateTime
+from sqlalchemy import Column, Text, ForeignKey, CHAR, DateTime, Index
 from sqlalchemy.orm import relationship
 from databases import Base
 
@@ -15,9 +15,8 @@ class Answer(Base):
     content = Column(Text, index=True)
     created_at = Column(DateTime)
 
-    question = relationship('Question', back_populates='answers')
-    user = relationship('User', back_populates='answers')
-    
     def __init__(self):
         self.id = str(uuid.uuid4())
         self.created_at = datetime.datetime.now()
+
+Index('answer_content', Answer.content, mysql_length=400)

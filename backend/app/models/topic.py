@@ -19,9 +19,8 @@ class Topic(Base):
     target = Column(Enum('student', 'professional', 'people', 'god'))
     user_id = Column(CHAR, ForeignKey('users_table.id'))
     
-    # user = relationship('User', back_populates='topics')
-    # question = relationship('Question', back_populates='topics')
-    # evaluation = relationship('Evaluation', back_populates='topics')
+    question = relationship('Question', backref='topics')
+    evaluation = relationship('Evaluation', backref='topics')
     
     def __init__(self):
         self.id = str(uuid.uuid4())
