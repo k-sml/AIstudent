@@ -1,0 +1,25 @@
+version: "3.0"
+
+services:
+  api:
+    container_name: "aistudent-fastapi"
+    volumes:
+      - ./app:/app
+    build: .
+    ports:
+      - 8000:8000
+    environment:
+      - DATABASE_URL=mysql+pymysql://root:test@db:3306/test?charset=utf8
+    depends_on:
+      - db
+  db:
+    image: mysql:8.0
+    container_name: aistudent-db
+    ports:
+      - 3306:3306
+    volumes:
+      - ./data:/docker-entrypoint-initdb.d/
+      - ./mysql/my.conf:/etc/mysql/conf.d/my.cnf
+    environment:
+      - MYSQL_ROOT_PASSWORD=test
+      - MYSQL_DATABASE=test

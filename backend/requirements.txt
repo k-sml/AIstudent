@@ -1,0 +1,10 @@
+fastapi==0.68.0
+uvicorn==0.15.0
+sqlalchemy==2.0.20
+pymysql==1.0.2
+aiomysql
+alembic
+python-dotenv
+cryptography
+pydantic
+openai
