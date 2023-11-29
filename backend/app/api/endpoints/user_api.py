@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-from crud.user_crud import select_all_user, create_user, delete_user, select_user, update_user
+from crud.user_crud import select_all_user, create_user, delete_user, select_user, update_user, user_check
 
-from schemas.user_schema import UserCreate, UserResponseModel
+from schemas.user_schema import UserCreate, UserResponseModel, UserLogin
 from typing import List
 
 router = APIRouter()
@@ -16,6 +16,14 @@ def read_user(user_id: str):
     user = select_user(user_id)
     return UserResponseModel(id=user.id, name=user.name, email=user.email)
 
+@router.post("/users/login",tags=['Users'])
+def login_user(user: UserLogin):
+    user = user_check(user.email, user.password)
+    if(user == 0):
+        return 0
+    else:
+      return user
+    
 @router.post("/users/", response_model=UserCreate,tags=['Users'])
 def create_new_user(user: UserCreate):
     create_user(user.name, user.email, user.password)
