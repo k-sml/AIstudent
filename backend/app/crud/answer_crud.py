@@ -10,7 +10,6 @@ def create_answer(question_id, user_id, content):
     answer = Answer()
     answer.user_id = user_id
     answer.question_id = question_id
-    answer.created_at = datetime.datetime.now()
     answer.content = content
     session.add(answer)
     session.commit()
