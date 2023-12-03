@@ -26,6 +26,7 @@ def create_user(user_name, user_email, user_password):
     try:
       session.add(user)
       session.commit()
+      return user.id
     except IntegrityError:
         # メールアドレスが重複した場合のエラー処理
       session.rollback()  # トランザクションをロールバック
