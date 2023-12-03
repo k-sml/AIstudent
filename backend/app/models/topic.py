@@ -29,6 +29,6 @@ class Topic(Base):
 
 
 Index('topic_explain', Topic.explain, mysql_length=400)
-Index('topic_prompt', Topic.first_prompt, mysql_length=400)
-Index('topic_header', Topic.first_header, mysql_length=400)
+Index('topic_first_prompt', Topic.first_prompt, mysql_length=400)
+Index('topic_first_header', Topic.first_header, mysql_length=400)
 
