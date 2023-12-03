@@ -17,7 +17,8 @@ def create_topic(topic_title, topic_explain, topic_target,user_id,topic_first_pr
     topic_id = topic.id
     session.add(topic)
     session.commit()
-    return topic_id
+    session.refresh(topic)
+    return topic
 
 # user_idを指定してトピックを複数取得する関数
 def select_user_topic(user_id):
