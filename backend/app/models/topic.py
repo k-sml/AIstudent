@@ -17,7 +17,7 @@ class Topic(Base):
     explain = Column(Text)
  
     # Enum型を使用してtarget属性を追加
-    target = Column(Enum('student', 'professional', 'people', 'god'))
+    target = Column(Enum('Students who know nothing', 'Someone who has general knowledge of the field', 'Ordinary people who know common sense', 'Almighty God'))
     first_prompt = Column(Text)
     first_header = Column(Text)
     

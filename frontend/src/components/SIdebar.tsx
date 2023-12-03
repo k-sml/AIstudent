@@ -24,7 +24,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import PersonIcon from '@mui/icons-material/Person';
-import {useSession} from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { signOut } from 'next-auth/react';
 import apiClient from '@/lib/apiClient';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
@@ -86,7 +86,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 
-const PersistentDrawerLeft:React.FC<PersistentDrawerLeftProps> =({children}) =>{
+const PersistentDrawerLeft: React.FC<PersistentDrawerLeftProps> = ({ children }) => {
   const theme = useTheme();
   const { data: session } = useSession();
   const [topics, setTopics] = React.useState<TopicArray>([]);
@@ -118,37 +118,37 @@ const PersistentDrawerLeft:React.FC<PersistentDrawerLeftProps> =({children}) =>{
       <AppBar position="fixed" open={open} sx={{ backgroundColor: '#0099FF' }}>
         <Toolbar>
           {session && (
-          <>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={{ mr: 2, ...(open && { display: 'none' }) }}
-            >
-              <MenuIcon />
-            </IconButton>
-          </>
+            <>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
+                sx={{ mr: 2, ...(open && { display: 'none' }) }}
+              >
+                <MenuIcon />
+              </IconButton>
+            </>
           )}
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             AIstudent
-          </Typography> 
+          </Typography>
           {session && (
-          <>
-          <Button color="inherit" startIcon={<PersonIcon/>}>
+            <>
+              <Button color="inherit" startIcon={<PersonIcon />}>
                 {session?.user.name}
-          </Button>
-          <Button color="inherit" startIcon={<AddCircleOutlineIcon />}>
-            新規講義作成
-          </Button>
-          <Button color="inherit" startIcon={<SettingsIcon />}>
-            設定
-          </Button>
-          <Button color="inherit" startIcon={<LogoutOutlinedIcon />} onClick={()=>signOut()}>
-            ログアウト
-          </Button>
-         </>
-         )}  
+              </Button>
+              <Button color="inherit" startIcon={<AddCircleOutlineIcon />} href='/lecture'>
+                新規講義作成
+              </Button>
+              <Button color="inherit" startIcon={<SettingsIcon />}>
+                設定
+              </Button>
+              <Button color="inherit" startIcon={<LogoutOutlinedIcon />} onClick={() => signOut()}>
+                ログアウト
+              </Button>
+            </>
+          )}
         </Toolbar>
       </AppBar>
       <Drawer

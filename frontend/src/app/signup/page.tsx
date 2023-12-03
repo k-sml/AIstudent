@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react';
-import { Container, CssBaseline, Box, Typography, TextField, Button, Avatar, Grid, Link,Alert } from '@mui/material';
+import { Container, CssBaseline, Box, Typography, TextField, Button, Avatar, Grid, Link, Alert } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation'
@@ -9,7 +9,7 @@ const SignUp: React.FC = () => {
   const [username, setUsername] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [err , setErr] = useState<string>('');
+  const [err, setErr] = useState<string>('');
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -20,14 +20,14 @@ const SignUp: React.FC = () => {
         redirect: false,
         email: email,
         password: password,
-        name:username,
-        type:"signup",
+        name: username,
+        type: "signup",
       }).then((res) => {
         if (res?.error) {
           console.log(res);
           setErr("既に登録されているメールアドレスです");
         } else {
-          router.push("/lecture");
+          router.push("/");
         }
       });
     } catch (err) {
@@ -38,13 +38,13 @@ const SignUp: React.FC = () => {
   const GoogleSingIn = async () => {
     try {
       await signIn('google', {}, { prompt: 'login' });
-      router.push("/lecture");
+      router.push("/");
     } catch (err) {
       console.log(err);
     }
   }
 
-  
+
 
   return (
     <Container component="main" maxWidth="xs">
@@ -66,7 +66,7 @@ const SignUp: React.FC = () => {
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
 
-          <Grid item xs={12}>            
+            <Grid item xs={12}>
               <TextField
                 autoComplete="username"
                 name="username"
@@ -106,11 +106,11 @@ const SignUp: React.FC = () => {
             </Grid>
             <Grid item xs={12}>
               {err && (
-              <Alert severity="error">{err}</Alert>
+                <Alert severity="error">{err}</Alert>
               )}
             </Grid>
           </Grid>
-          
+
           <Button
             type="submit"
             fullWidth
@@ -124,9 +124,9 @@ const SignUp: React.FC = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
             onClick={GoogleSingIn} // Googleでサインイン
-            >
+          >
             Googleでサインイン
-            </Button>
+          </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
               <Link href="login" variant="body2">
