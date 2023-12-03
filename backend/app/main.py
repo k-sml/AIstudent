@@ -12,6 +12,7 @@ from api.endpoints import topic_api
 from api.endpoints import question_api
 # from api.endpoints import evaluation_api
 # from api.endpoints import answer_api
+from api.endpoints import execute_gpt_api
 
 # .pycファイルの生成を防ぐ
 sys.dont_write_bytecode = True
@@ -23,6 +24,7 @@ app = FastAPI()
 app.include_router(user_api.router, prefix="/api")
 app.include_router(topic_api.router, prefix="/api")
 app.include_router(question_api.router, prefix="/api")
+app.include_router(execute_gpt_api.router, prefix="/api")
 # app.include_router(answer_api.router, prefix="/api")
 
 
@@ -35,7 +37,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.include_router(user_api.router, prefix="/api")
 
 
 @app.get('/')

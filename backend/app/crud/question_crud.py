@@ -10,16 +10,16 @@ load_dotenv()
 
 sys.dont_write_bytecode = True
 
-def create_first_question(topic_id):
+def create_first_question(topic_id, content):
     session = create_new_session()
-    topic = session.query(Topic).filter(Topic.id == topic_id).first()
     question = Question()
-    question.content = topic.first_header + topic.first_prompt
+    question.content = content
     question.created_at = datetime.datetime.now()
     question.topic_id = topic_id
+    question_id = question.id
     session.add(question)
     session.commit()
-    return 0
+    return question_id
 
 def create_question(answer_id):
     session = create_new_session()
@@ -33,19 +33,14 @@ def create_question(answer_id):
     session.commit()
     return question
 
-# def execute_question(prompt):
-#     openai.api_key = os.getenv('OPENAI_API_KEY')
-#     model = "gpt-3.5-turbo"
-#     response = openai.Completion.create(
-#         engine=model,
-#         prompt=prompt,
-#         max_tokens=100,
-#     )
-#     return response
-
 def select_questions(topic_id):
     session = create_new_session()
     question_list = session.query(Question).filter(Question.topic_id == topic_id)
     if question_list == None:
         question_list = []
     return question_list
+
+def select_questions_by_questionID(question_id):
+    session = create_new_session()
+    question = session.query(Question).filter(Question.id == question_id)
+    return question

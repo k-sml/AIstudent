@@ -16,6 +16,13 @@ def create_answer(question_id, user_id, content):
     session.commit()
     return 0
 
+def get_answer(answer_id):
+    session = create_new_session()
+    answer = session.query(Answer).filter(Answer.id == answer_id).first()
+    if answer == None:
+        answer = ""
+    return answer
+
 def select_answer(question_id):
     session = create_new_session()
     answer = session.query(Answer).filter(Answer.question_id == question_id).first()

@@ -12,7 +12,7 @@ class Answer(Base):
     id = Column(CHAR(36), primary_key=True)
     question_id = Column(CHAR(36), ForeignKey('questions_table.id'))
     user_id = Column(CHAR(36), ForeignKey('users_table.id'))
-    content = Column(Text, index=True)
+    content = Column(Text)
     created_at = Column(DateTime)
 
     def __init__(self):

@@ -21,7 +21,7 @@ const Header: React.FC = () => {
 
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#0099FF'}}>
+    <AppBar position="static" sx={{ backgroundColor: '#0099FF' }}>
       <Toolbar>
         {isMobile && (
           <IconButton edge="start" color="inherit" aria-label="menu">
@@ -34,8 +34,8 @@ const Header: React.FC = () => {
         </Typography>
         {!isMobile && (
           <>
-            <Button color="inherit" startIcon={<PersonIcon/>}>
-              {session?.user?.name}
+            <Button color="inherit" startIcon={<PersonIcon />}>
+              {session?.user.name}
             </Button>
             <Button color="inherit" startIcon={<AddCircleOutlineIcon />}>
               新規講義作成
