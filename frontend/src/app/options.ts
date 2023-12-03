@@ -3,6 +3,7 @@ import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import apiClient from "@/lib/apiClient";
+import Axios from "axios";
 
 export const options: NextAuthOptions = {
         debug: true,
@@ -57,7 +58,11 @@ export const options: NextAuthOptions = {
                                 return {id: res.data.id, name: res.data.name, email: res.data.email, role: null}
                             }
                         }catch (e) {
-                            console.log(e);
+                            if (Axios.isAxiosError(e) && e.response && e.response.status === 400) {
+                                console.log('400 Error!!');
+                                return null;
+                            }
+                    
                             return null;
                         }
                     }

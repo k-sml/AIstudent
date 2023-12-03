@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react';
-import { Container, CssBaseline, Box, Typography, TextField, Button, Avatar, Grid, Link } from '@mui/material';
+import { Container, CssBaseline, Box, Typography, TextField, Button, Avatar, Grid, Link, Alert } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
@@ -8,6 +8,7 @@ import { signIn } from 'next-auth/react';
 const LogIn: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [err , setError] = useState<string>('');
 
   const router = useRouter();
 
@@ -23,6 +24,7 @@ const LogIn: React.FC = () => {
       }).then((res) => {
         if (res?.error) {
           console.log(res.error);
+          setError("メールアドレスかパスワードが間違っています")
         } else {
           router.push("/lecture");
         }
@@ -31,6 +33,15 @@ const LogIn: React.FC = () => {
       console.log(err);
     }
   };
+
+  const GoogleSingIn = async () => {
+    try {
+      await signIn('google', {}, { prompt: 'login' });
+      router.push("/lecture");
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
 
   return (
@@ -77,6 +88,9 @@ const LogIn: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Grid>
+            <Grid item xs={12}>
+              {err && <Alert severity="error">{err}</Alert>}
+            </Grid>
           </Grid>
           <Button
             type="submit"
@@ -86,6 +100,14 @@ const LogIn: React.FC = () => {
           >
             ログイン
           </Button>
+          <Button
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            onClick={GoogleSingIn} // Googleでサインイン
+            >
+            Googleでログイン
+            </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
               <Link href="/signup" variant="body2">
