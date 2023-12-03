@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react';
-import { 
+import {
   Typography,
   Container,
   TextField,
@@ -23,16 +23,17 @@ import apiClient from '@/lib/apiClient';
 
 
 interface ChatMessage {
-  id: string;
-  text: string;
-  owner: 'ai' | 'user';
+  role: 'system' | 'user' | 'assistant';
+  content: string;
 }
+
 
 export default function App() {
   const [level, setLevel] = useState<string>('');
   const [topic, setTopic] = useState<string>('');
   const [explanation, setExplanation] = useState<string>('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [questionId, setQuestionID] = useState<string>('');
   const [answer, setAnswer] = useState<string>('');
   const { data: session } = useSession();
   const handleChangeLevel = (event: SelectChangeEvent<string>) => {
@@ -43,41 +44,43 @@ export default function App() {
     e.preventDefault();
     const topicData = { title: topic, explain: explanation, target: level ,user_id: session?.user.id };
     try {
-      const res = await apiClient.post('/api/topic', topicData); 
-      console.log(res.data);
+      const response = await apiClient.post('/api/topic', topicData);
+      console.log('response:', response);
+      // APIの応答を新しいメッセージ形式に変換（例）
+      const newMessage: ChatMessage = {
+        role: 'assistant',
+        content: response.data.choices[0].message.content,
+      };
+      const question_id = response.data.question_id;
+
+      setMessages([...messages, newMessage]);
+      setQuestionID(question_id);
     }
     catch (e) {
       console.log(e);
     }
-    // ここでバックエンドにお題、説明、レベルを送信し、最初の質問を取得します。
-    // 以下はダミーの質問を追加するコードです。
-
-    const firstQuestion: ChatMessage = {
-      id: Math.random().toString(36).substring(2),
-      text: "最初のバックエンドからの質問ですか？",
-      owner: 'ai',
-    };
-    setMessages([...messages, firstQuestion]);
   }
 
-  const handleSendAnswer = async () => {
-    if (answer.trim()) {
-      // ここでバックエンドに解答を送信し、次の質問を取得します。
-      // 以下はダミーの次の質問を追加するコードです。
-      const userAnswer: ChatMessage = {
-        id: Math.random().toString(36).substring(2),
-        text: answer,
-        owner: 'user',
-      };
-      const nextQuestion: ChatMessage = {
-        id: Math.random().toString(36).substring(2),
-        text: "次のバックエンドからの質問ですか？",
-        owner: 'ai',
-      };
-      setMessages([...messages, userAnswer, nextQuestion]);
-      setAnswer(''); // 解答欄をクリア
-    }
-  }
+  // const handleSendAnswer = async () => {
+  //   if (answer.trim()) {
+  //     // ここでバックエンドに解答を送信し、次の質問を取得します。
+  //     // 以下はダミーの次の質問を追加するコードです。
+  //     const userAnswer: ChatMessage = {
+  //       role: 'user',
+  //       content: answer,
+  //     };
+  //     try {
+  //       const res = await apiClient.post('/api/answer', user_id = data ? user.id,)
+  //     }
+  //     const nextQuestion: ChatMessage = {
+  //       id: Math.random().toString(36).substring(2),
+  //       text: "次のバックエンドからの質問ですか？",
+  //       owner: 'ai',
+  //     };
+  //     setMessages([...messages, userAnswer, nextQuestion]);
+  //     setAnswer(''); // 解答欄をクリア
+  //   }
+  // }
 
   return (
     <Container maxWidth="sm">
@@ -130,15 +133,21 @@ export default function App() {
       </Box>
       <Divider />
       <List>
-        {messages.map((message) => (
-          <ListItem key={message.id}>
-            <ChatBubble owner={message.owner}>
-              {message.text}
-            </ChatBubble>
-          </ListItem>
-        ))}
+        {messages.map((message) => {
+          if (message.role === "system") {
+            return null
+          }
+
+          return (
+            <ListItem>
+              <ChatBubble owner={message.role}>
+                {message.content}
+              </ChatBubble>
+            </ListItem>
+          )
+        })}
       </List>
-      <Box mb={2}> {/* ここで最下部のマージンを追加します */}
+      {/* <Box mb={2}> ここで最下部のマージンを追加します
         {messages.length > 0 && (
           <>
             <TextField
@@ -164,7 +173,7 @@ export default function App() {
             </Button>
           </>
         )}
-      </Box>
+      </Box> */}
     </Container>
   );
 }

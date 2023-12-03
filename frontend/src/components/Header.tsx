@@ -23,7 +23,7 @@ const Header: React.FC = () => {
 
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#0099FF'}}>
+    <AppBar position="static" sx={{ backgroundColor: '#0099FF' }}>
       <Toolbar>
         {isMobile && (
           <IconButton edge="start" color="inherit" aria-label="menu">
