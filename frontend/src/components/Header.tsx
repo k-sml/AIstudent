@@ -39,7 +39,7 @@ const Header: React.FC = () => {
             {session && (
             <>
               <Button color="inherit" startIcon={<PersonIcon/>}>
-                {session?.user?.name}
+                {session?.user.name}
               </Button>
               <Button color="inherit" startIcon={<AddCircleOutlineIcon />}>
                 新規講義作成
