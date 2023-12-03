@@ -35,12 +35,12 @@ export default function App() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [answer, setAnswer] = useState<string>('');
   const { data: session } = useSession();
-
   const handleChangeLevel = (event: SelectChangeEvent<string>) => {
     setLevel(event.target.value);
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     const topicData = { title: topic, explain: explanation, target: level ,user_id: session?.user.id };
     try {
       const res = await apiClient.post('/api/topic', topicData); 
@@ -81,7 +81,7 @@ export default function App() {
 
   return (
     <Container maxWidth="sm">
-      <Box my={4}>
+      <Box component="form" onSubmit={handleSubmit} my={4}> 
         <Typography variant="h6" component="h1" gutterBottom>
           {session?.user.name}による授業 その?
         </Typography>
@@ -93,6 +93,7 @@ export default function App() {
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
           disabled={messages.length > 0}
+          required
         />
         <TextField
           fullWidth
@@ -104,6 +105,7 @@ export default function App() {
           multiline
           rows={4}
           disabled={messages.length > 0}
+          required
         />
         <FormControl fullWidth margin="normal">
           <InputLabel id="level-select-label">相手のレベル</InputLabel>
@@ -114,6 +116,7 @@ export default function App() {
             label="相手のレベル"
             onChange={handleChangeLevel}
             disabled={messages.length > 0}
+            required
           >
             <MenuItem value={'student'}>学生</MenuItem>
             <MenuItem value={'people'}>一般人</MenuItem>
@@ -121,7 +124,7 @@ export default function App() {
             <MenuItem value={'god'}>プロフェッショナル</MenuItem>
           </Select>
         </FormControl>
-        <Button variant="contained" sx={{ backgroundColor: '#0099FF'}} fullWidth onClick={handleSubmit}>
+        <Button variant="contained" sx={{ backgroundColor: '#0099FF'}} fullWidth type="submit">
           送信
         </Button>
       </Box>
