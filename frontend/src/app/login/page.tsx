@@ -9,7 +9,7 @@ import { signIn } from 'next-auth/react';
 const LogIn: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [err , setError] = useState<string>('');
+  const [err, setError] = useState<string>('');
 
   const router = useRouter();
 
@@ -21,13 +21,13 @@ const LogIn: React.FC = () => {
         redirect: false,
         email: email,
         password: password,
-        type:"login",
+        type: "login",
       }).then((res) => {
         if (res?.error) {
           console.log(res.error);
           setError("メールアドレスかパスワードが間違っています")
         } else {
-          router.push("/lecture");
+          router.push("/");
         }
       });
     } catch (err) {
@@ -38,7 +38,7 @@ const LogIn: React.FC = () => {
   const GoogleSingIn = async () => {
     try {
       await signIn('google', {}, { prompt: 'login' });
-      router.push("/lecture");
+      router.push("/");
     } catch (err) {
       console.log(err);
     }
@@ -48,7 +48,7 @@ const LogIn: React.FC = () => {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      
+
       <Box
         sx={{
           marginTop: 8,
@@ -107,9 +107,9 @@ const LogIn: React.FC = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
             onClick={GoogleSingIn} // Googleでサインイン
-            >
+          >
             Googleでログイン
-            </Button>
+          </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
               <Link href="/signup" variant="body2">
