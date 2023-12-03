@@ -19,9 +19,9 @@ export const options: NextAuthOptions = {
                         if(res.data==0){
                             const signInUser = {name: profile.name, email: profile.email, password: profile.sub };
                             const res = await apiClient.post('/api/users/', signInUser);
-                            return {id: res.data.id, name: res.data.email, email: res.data.email}
+                            return {id: res.data.id, name: res.data.name, email: res.data.email}
                         }
-                        return {id: res.data.id, name: res.data.email, email: res.data.email, role: null}
+                        return {id: res.data.id, name: res.data.name, email: res.data.email, role: null}
                     }catch (e) {
                         console.log(e);
                         return {id: null, name: null, email: null}
@@ -46,7 +46,7 @@ export const options: NextAuthOptions = {
                             if(credentials?.type=="signup"){
                                 const user = {name: credentials?.name, email: credentials?.email, password: credentials?.password };
                                 const res = await apiClient.post('/api/users/',user);
-                                return {id: res.data.id, name: res.data.email, email: res.data.email, role: null}
+                                return {id: res.data.id, name: res.data.name, email: res.data.email, role: null}
                             }
                             else{
                                 const user = {email: credentials?.email, password: credentials?.password };
@@ -54,7 +54,7 @@ export const options: NextAuthOptions = {
                                 if(res.data==0){
                                     return null;
                                 }
-                                return {id: res.data.id, name: res.data.email, email: res.data.email, role: null}
+                                return {id: res.data.id, name: res.data.name, email: res.data.email, role: null}
                             }
                         }catch (e) {
                             console.log(e);
@@ -83,6 +83,10 @@ export const options: NextAuthOptions = {
             session: ({session, token}) => {
                 console.log("in session", {session, token});
                 token.accessToken
+                if (session.user != null && token.sub != null) {
+                    session.user.id = token.sub;
+                }
+              
                 return {
                     ...session,
                     user: {

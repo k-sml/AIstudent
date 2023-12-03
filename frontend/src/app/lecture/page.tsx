@@ -18,6 +18,9 @@ import {
   CardContent,
 } from '@mui/material';
 import ChatBubble from '../../components/ChatBubble';
+import { useSession } from 'next-auth/react';
+import apiClient from '@/lib/apiClient';
+
 
 interface ChatMessage {
   id: string;
@@ -31,14 +34,24 @@ export default function App() {
   const [explanation, setExplanation] = useState<string>('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [answer, setAnswer] = useState<string>('');
+  const { data: session } = useSession();
 
   const handleChangeLevel = (event: SelectChangeEvent<string>) => {
     setLevel(event.target.value);
   }
 
   const handleSubmit = async () => {
+    const topicData = { title: topic, explain: explanation, target: level ,user_id: session?.user.id };
+    try {
+      const res = await apiClient.post('/api/topic', topicData); 
+      console.log(res.data);
+    }
+    catch (e) {
+      console.log(e);
+    }
     // ここでバックエンドにお題、説明、レベルを送信し、最初の質問を取得します。
     // 以下はダミーの質問を追加するコードです。
+
     const firstQuestion: ChatMessage = {
       id: Math.random().toString(36).substring(2),
       text: "最初のバックエンドからの質問ですか？",
@@ -70,7 +83,7 @@ export default function App() {
     <Container maxWidth="sm">
       <Box my={4}>
         <Typography variant="h6" component="h1" gutterBottom>
-          usernameによる授業 その?
+          {session?.user.name}による授業 その?
         </Typography>
         <TextField
           fullWidth
@@ -79,6 +92,7 @@ export default function App() {
           margin="normal"
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
+          disabled={messages.length > 0}
         />
         <TextField
           fullWidth
@@ -89,6 +103,7 @@ export default function App() {
           onChange={(e) => setExplanation(e.target.value)}
           multiline
           rows={4}
+          disabled={messages.length > 0}
         />
         <FormControl fullWidth margin="normal">
           <InputLabel id="level-select-label">相手のレベル</InputLabel>
@@ -98,10 +113,12 @@ export default function App() {
             value={level}
             label="相手のレベル"
             onChange={handleChangeLevel}
+            disabled={messages.length > 0}
           >
-            <MenuItem value={'highschool'}>中学生</MenuItem>
-            <MenuItem value={'university'}>大学生</MenuItem>
-            <MenuItem value={'peer'}>同業者</MenuItem>
+            <MenuItem value={'student'}>学生</MenuItem>
+            <MenuItem value={'people'}>一般人</MenuItem>
+            <MenuItem value={'professional'}>同業者</MenuItem>
+            <MenuItem value={'god'}>プロフェッショナル</MenuItem>
           </Select>
         </FormControl>
         <Button variant="contained" sx={{ backgroundColor: '#0099FF'}} fullWidth onClick={handleSubmit}>
