@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react';
-import { Container, CssBaseline, Box, Typography, TextField, Button, Avatar, Grid, Link } from '@mui/material';
+import { Container, CssBaseline, Box, Typography, TextField, Button, Avatar, Grid, Link,Alert } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation'
@@ -9,6 +9,7 @@ const SignUp: React.FC = () => {
   const [username, setUsername] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [err , setErr] = useState<string>('');
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -23,7 +24,8 @@ const SignUp: React.FC = () => {
         type:"signup",
       }).then((res) => {
         if (res?.error) {
-          console.log(res.error);
+          console.log(res);
+          setErr("既に登録されているメールアドレスです");
         } else {
           router.push("/lecture");
         }
@@ -102,7 +104,13 @@ const SignUp: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Grid>
+            <Grid item xs={12}>
+              {err && (
+              <Alert severity="error">{err}</Alert>
+              )}
+            </Grid>
           </Grid>
+          
           <Button
             type="submit"
             fullWidth
