@@ -42,16 +42,15 @@ export default function App() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const topicData = { title: topic, explain: explanation, target: level ,user_id: session?.user.id };
+    const topicData = { title: topic, explain: explanation, target: level, user_id: session?.user.id };
     try {
       const response = await apiClient.post('/api/topic', topicData);
-      console.log('response:', response);
       // APIの応答を新しいメッセージ形式に変換（例）
       const newMessage: ChatMessage = {
         role: 'assistant',
-        content: response.data.choices[0].message.content,
+        content: response.data[0].choices[0].message.content,
       };
-      const question_id = response.data.question_id;
+      const question_id = response.data[1];
 
       setMessages([...messages, newMessage]);
       setQuestionID(question_id);
@@ -61,30 +60,35 @@ export default function App() {
     }
   }
 
-  // const handleSendAnswer = async () => {
-  //   if (answer.trim()) {
-  //     // ここでバックエンドに解答を送信し、次の質問を取得します。
-  //     // 以下はダミーの次の質問を追加するコードです。
-  //     const userAnswer: ChatMessage = {
-  //       role: 'user',
-  //       content: answer,
-  //     };
-  //     try {
-  //       const res = await apiClient.post('/api/answer', user_id = data ? user.id,)
-  //     }
-  //     const nextQuestion: ChatMessage = {
-  //       id: Math.random().toString(36).substring(2),
-  //       text: "次のバックエンドからの質問ですか？",
-  //       owner: 'ai',
-  //     };
-  //     setMessages([...messages, userAnswer, nextQuestion]);
-  //     setAnswer(''); // 解答欄をクリア
-  //   }
-  // }
+  const handleSendAnswer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (answer.trim()) {
+      console.log(answer);
+      // ここでバックエンドに解答を送信し、次の質問を取得します。
+      // 以下はダミーの次の質問を追加するコードです。
+      const userAnswer: ChatMessage = {
+        role: 'user',
+        content: answer,
+      };
+      const answerData = { user_id: session?.user.id, question_id: questionId, content: userAnswer, messages: messages };
+      try {
+        const response = await apiClient.post('/api/answer', answerData);
+        const nextQuestion: ChatMessage = {
+          role: 'assistant',
+          content: response.data[0].choices[0].message.content,
+        };
+        setMessages([...messages, userAnswer, nextQuestion]);
+        setAnswer(''); // 解答欄をクリア
+      }
+      catch (e) {
+        console.log(e);
+      }
+    }
+  }
 
   return (
     <Container maxWidth="sm">
-      <Box component="form" onSubmit={handleSubmit} my={4}> 
+      <Box component="form" onSubmit={handleSubmit} my={4}>
         <Typography variant="h6" component="h1" gutterBottom>
           {session?.user.name}による授業 その?
         </Typography>
@@ -127,7 +131,7 @@ export default function App() {
             <MenuItem value={'god'}>プロフェッショナル</MenuItem>
           </Select>
         </FormControl>
-        <Button variant="contained" sx={{ backgroundColor: '#0099FF'}} fullWidth type="submit">
+        <Button variant="contained" sx={{ backgroundColor: '#0099FF' }} fullWidth type="submit">
           送信
         </Button>
       </Box>
@@ -147,7 +151,7 @@ export default function App() {
           )
         })}
       </List>
-      {/* <Box mb={2}> ここで最下部のマージンを追加します
+      <Box mb={2} onSubmit={handleSendAnswer} component="form">
         {messages.length > 0 && (
           <>
             <TextField
@@ -155,25 +159,23 @@ export default function App() {
               label="回答を入力"
               variant="outlined"
               margin="normal"
+              multiline
+              rows={4}
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleSendAnswer();
-                }
-              }}
+              required
             />
             <Button
               variant="contained"
               sx={{ backgroundColor: '#00CC99', mt: 1 }} // 送信ボタンの上のマージンもここで設定
               fullWidth
-              onClick={handleSendAnswer}
+              type="submit"
             >
               解答を送信
             </Button>
           </>
         )}
-      </Box> */}
+      </Box>
     </Container>
   );
 }

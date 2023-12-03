@@ -12,9 +12,10 @@ def create_answer(question_id, user_id, content):
     answer.question_id = question_id
     answer.created_at = datetime.datetime.now()
     answer.content = content
+    answer_id = answer.id
     session.add(answer)
     session.commit()
-    return 0
+    return answer_id
 
 def get_answer(answer_id):
     session = create_new_session()
