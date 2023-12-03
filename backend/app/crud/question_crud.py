@@ -12,14 +12,11 @@ sys.dont_write_bytecode = True
 
 def create_first_question(topic_id):
     session = create_new_session()
-    target = session.query(Topic).filter(Topic.id == topic_id).target
-    title = session.query(Topic).filter(Topic.id == topic_id).title
-    explain = session.query(Topic).filter(Topic.id == topic_id).explain
-    header = f"あなたは{topic_id.target}になりきって今から与えるタイトルに関する説明を受け、疑問に思うことや発展して聞きたいことを出力して下さい。\n最終的な目的は説明をしてくる相手のタイトルに関する理解を深めるために行っています。\n"
-    prompt = header + f"{topic_id.title}に関する説明を今から行います。\n{topic_id.explain}"
+    topic = session.query(Topic).filter(Topic.id == topic_id).first()
     question = Question()
-    question.content = prompt
+    question.content = topic.first_header + topic.first_prompt
     question.created_at = datetime.datetime.now()
+    question.topic_id = topic_id
     session.add(question)
     session.commit()
     return 0
@@ -34,7 +31,7 @@ def create_question(answer_id):
     question.created_at = datetime.datetime.now()
     session.add(question)
     session.commit()
-    return 0
+    return question
 
 # def execute_question(prompt):
 #     openai.api_key = os.getenv('OPENAI_API_KEY')

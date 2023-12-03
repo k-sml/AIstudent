@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 import datetime
 
-class QuestionCreate(BaseModel):
-    prompt: str
+class QuestionResponseModel(BaseModel):
+    id: str
+    content: str
     created_at: datetime.datetime
