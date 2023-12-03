@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 from crud.user_crud import select_all_user, create_user, delete_user, select_user, update_user, user_check
-
 from schemas.user_schema import UserCreate, UserResponseModel, UserLogin
 from typing import List
 

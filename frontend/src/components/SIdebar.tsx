@@ -26,6 +26,10 @@ import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import PersonIcon from '@mui/icons-material/Person';
 import { useSession } from 'next-auth/react';
 import { signOut } from 'next-auth/react';
+import apiClient from '@/lib/apiClient';
+import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
+// import { Topic } from '@mui/icons-material';
+import { TopicArray } from '@/type/topic';
 
 
 const drawerWidth = 240;
@@ -81,10 +85,11 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
+
 const PersistentDrawerLeft: React.FC<PersistentDrawerLeftProps> = ({ children }) => {
   const theme = useTheme();
   const { data: session } = useSession();
-
+  const [topics, setTopics] = React.useState<TopicArray>([]);
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
@@ -94,7 +99,19 @@ const PersistentDrawerLeft: React.FC<PersistentDrawerLeftProps> = ({ children })
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
+  React.useEffect(() => {
+    const fetchTopics = async () => {
+      try{
+        const user_id = session?.user.id; // Assuming session?.user.id is your variable
+        const res = await apiClient.get(`/api/myTopics/${user_id}`);
+        setTopics(res.data);
+        console.log(res.data);
+      }catch(e){
+        console.log(e);
+      }
+    }
+    fetchTopics();
+  },[session])
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -154,13 +171,13 @@ const PersistentDrawerLeft: React.FC<PersistentDrawerLeftProps> = ({ children })
         </DrawerHeader>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem key={text} disablePadding>
+          {topics.map((topic, index) => (
+            <ListItem key={topic.id} disablePadding>
               <ListItemButton>
                 <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  <ArticleOutlinedIcon />
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText primary={topic.title} />
               </ListItemButton>
             </ListItem>
           ))}
