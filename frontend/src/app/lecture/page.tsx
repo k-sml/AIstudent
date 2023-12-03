@@ -29,6 +29,7 @@ interface ChatMessage {
 export default function App() {
   const [level, setLevel] = useState<string>('');
   const [topic, setTopic] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [explanation, setExplanation] = useState<string>('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [questionId, setQuestionID] = useState<string>('');
@@ -40,12 +41,14 @@ export default function App() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     const topicData = { title: topic, explain: explanation, target: level, user_id: session?.user.id };
     try {
       const response = await apiClient.post('/api/topic', topicData);
       // APIの応答を新しいメッセージ形式に変換（例）
       const newMessage: ChatMessage[] = [
-        { role: 'system', content: `あなたは${level}の立場から今から与えるタイトルに関する説明を受け、疑問に思うことかさらに深く聞きたいことを1つ具体的にかつ簡潔に出力して下さい。\n最終的な目的は説明をしてくる相手と3回のやりとりを通じて、相手がタイトルに関する理解が確かなものかどうか確認することです。\n` },
+        // { role: 'system', content: `あなたは${level}の立場から今から与えるタイトルに関する説明を受け、聞きたいことを1つだけ具体的にかつ簡潔に出力して下さい。\n最終的な目的は説明をしてくる相手と3回のやりとりを通じて、相手がタイトルに関する理解が確かなものかどうか確認することです。\n` },
+        { role: 'system', content: `You are to take the position of level ${level} and receive an explanation about the given title. After hearing the explanation, you are to ask one specific and concise question. Please answer in Japanese.` },
         { role: 'user', content: `${topic}に関する説明を今から行います。\n${explanation}` },
         { role: 'assistant', content: response.data[0].choices[0].message.content },
       ];
@@ -57,10 +60,12 @@ export default function App() {
     catch (e) {
       console.log(e);
     }
+    setIsLoading(false);
   }
 
   const handleSendAnswer = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     if (answer.trim()) {
       const userAnswer: ChatMessage = {
         role: 'user',
@@ -80,6 +85,7 @@ export default function App() {
         console.log(e);
       }
     }
+    setIsLoading(false);
   }
 
   return (
@@ -127,7 +133,7 @@ export default function App() {
             <MenuItem value={'Almighty God'}>プロフェッショナル</MenuItem>
           </Select>
         </FormControl>
-        <Button variant="contained" sx={{ backgroundColor: '#0099FF' }} fullWidth type="submit">
+        <Button variant="contained" sx={{ backgroundColor: '#0099FF' }} fullWidth type="submit" disabled={messages.length > 0 || isLoading}>
           送信
         </Button>
       </Box>
@@ -166,6 +172,7 @@ export default function App() {
               sx={{ backgroundColor: '#00CC99', mt: 1 }} // 送信ボタンの上のマージンもここで設定
               fullWidth
               type="submit"
+              disabled={isLoading}
             >
               解答を送信
             </Button>
