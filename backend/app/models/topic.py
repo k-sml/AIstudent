@@ -15,8 +15,11 @@ class Topic(Base):
     user_id = Column(CHAR(36), ForeignKey('users_table.id'))
     title = Column(VARCHAR(255))
     explain = Column(Text)
+ 
     # Enum型を使用してtarget属性を追加
     target = Column(Enum('student', 'professional', 'people', 'god'))
+    first_prompt = Column(Text)
+    first_header = Column(Text)
     
     question = relationship('Question', backref='topics_table')
     evaluation = relationship('Evaluation', backref='topics_table')
@@ -26,3 +29,6 @@ class Topic(Base):
 
 
 Index('topic_explain', Topic.explain, mysql_length=400)
+Index('topic_prompt', Topic.first_prompt, mysql_length=400)
+Index('topic_header', Topic.first_header, mysql_length=400)
+

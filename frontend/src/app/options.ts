@@ -10,7 +10,24 @@ export const options: NextAuthOptions = {
         providers: [
             GoogleProvider({
                 clientId: process.env.GOOGLE_CLIENT_ID!,
-                clientSecret: process.env.GOOGLE_CLIENT_SECRET!
+                clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+           
+                async profile(profile) {
+                    const user = {email: profile.email, password: profile.sub };
+                    try {
+                        const res = await apiClient.post('/api/users/login',user);
+                        if(res.data==0){
+                            const signInUser = {name: profile.name, email: profile.email, password: profile.sub };
+                            const res = await apiClient.post('/api/users/', signInUser);
+                            return {id: res.data.id, name: res.data.email, email: res.data.email}
+                        }
+                        return {id: res.data.id, name: res.data.email, email: res.data.email, role: null}
+                    }catch (e) {
+                        console.log(e);
+                        return {id: null, name: null, email: null}
+                  
+                    }
+                }
             }),
             CredentialsProvider({
                     name: "Credentials",
@@ -18,19 +35,27 @@ export const options: NextAuthOptions = {
                         email: { label: 'email', type: 'email', placeholder: 'メールアドレス' },
                         password: { label: 'password', type: 'password' },
                         name: { label: 'name', type: 'text' },
+                        type: { label: 'type', type: 'text' },
 
                     },
                     // メルアド認証処理
-              
                     async authorize(credentials) {
-                        console.log("入りました");
+                        console.log("authorize入りました");
+                        //login処理
                         try {
-                            const body = { name: credentials?.name, email: credentials?.email, password: credentials?.password };
-                            console.log(body);
-                            const res = await apiClient.post('/api/users',body);
-
-                            console.log(res.data);
-                            return {id: res.data.id, name: res.data.email, email: res.data.email, role: "admin"}
+                            if(credentials?.type=="signup"){
+                                const user = {name: credentials?.name, email: credentials?.email, password: credentials?.password };
+                                const res = await apiClient.post('/api/users/',user);
+                                return {id: res.data.id, name: res.data.email, email: res.data.email, role: null}
+                            }
+                            else{
+                                const user = {email: credentials?.email, password: credentials?.password };
+                                const res = await apiClient.post('/api/users/login',user);
+                                if(res.data==0){
+                                    return null;
+                                }
+                                return {id: res.data.id, name: res.data.email, email: res.data.email, role: null}
+                            }
                         }catch (e) {
                             console.log(e);
                             return null;
@@ -39,15 +64,16 @@ export const options: NextAuthOptions = {
                 }
             ),
         ],
+        secret: process.env.NEXTAUTH_SECRET,
         callbacks: {
-            jwt: async ({token, user, account, profile, isNewUser}) => {
+            jwt: async ({token, user, account, profile, isNewUser,trigger}) => {
+                console.log("jwt入りました")
                 // 注意: トークンをログ出力してはダメです。
-                console.log('in jwt', {user, token, account, profile})
-
+                console.log('in jwt', {user, token, account, profile, trigger})
                 if (user) {
                     token.user = user;
                     const u = user as any
-                    token.role = u.role;
+                    token.role = "admin";
                 }
                 if (account) {
                     token.accessToken = account.access_token

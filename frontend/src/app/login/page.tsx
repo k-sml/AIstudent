@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import { Container, CssBaseline, Box, Typography, TextField, Button, Avatar, Grid, Link } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 const LogIn: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -10,12 +11,27 @@ const LogIn: React.FC = () => {
 
   const router = useRouter();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // ここで新規登録処理を実装します
-    console.log(email, password);
-    // 新規登録APIへのリクエストなど
+    try {
+      await signIn("credentials", {
+        redirect: false,
+        email: email,
+        password: password,
+        type:"login",
+      }).then((res) => {
+        if (res?.error) {
+          console.log(res.error);
+        } else {
+          router.push("/lecture");
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
+
 
   return (
     <Container component="main" maxWidth="xs">
@@ -72,7 +88,7 @@ const LogIn: React.FC = () => {
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href="/login" variant="body2">
+              <Link href="/signup" variant="body2">
                 アカウントを持っていない場合はこちら
               </Link>
             </Grid>

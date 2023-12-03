@@ -13,7 +13,6 @@ const SignUp: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
- 
     // ここで新規登録処理を実装します
     try {
       await signIn("credentials", {
@@ -21,20 +20,27 @@ const SignUp: React.FC = () => {
         email: email,
         password: password,
         name:username,
+        type:"signup",
       }).then((res) => {
         if (res?.error) {
           console.log(res.error);
-
         } else {
           router.push("/lecture");
         }
       });
     } catch (err) {
       console.log(err);
-
     }
   };
 
+  const GoogleSingIn = async () => {
+    try {
+      await signIn('google', {}, { prompt: 'login' });
+      router.push("/lecture");
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   
 
@@ -109,13 +115,13 @@ const SignUp: React.FC = () => {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
-            onClick={() => signIn('google', {}, { prompt: 'login' })} // Googleでサインイン
+            onClick={GoogleSingIn} // Googleでサインイン
             >
             Googleでサインイン
             </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href="/auth/login" variant="body2">
+              <Link href="login" variant="body2">
                 すでにアカウントを持っている場合はこちら
               </Link>
             </Grid>
