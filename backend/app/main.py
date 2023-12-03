@@ -9,6 +9,7 @@ from models.answer import Answer
 from models.evaluation import Evaluation
 from api.endpoints import user_api
 from api.endpoints import topic_api
+from api.endpoints import answer_api
 # from api.endpoints import question_api
 # from api.endpoints import evaluation_api
 # from api.endpoints import answer_api
@@ -22,6 +23,7 @@ app = FastAPI()
 
 app.include_router(user_api.router, prefix="/api")
 app.include_router(topic_api.router, prefix="/api")
+# app.include_router(answer_api.router, prefix="/api")
 
 
 origins = ['http://localhost:3000']

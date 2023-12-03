@@ -1,7 +1,10 @@
 # -*- encoding: utf-8 -*-
+from fastapi import HTTPException
+from sqlalchemy.exc import IntegrityError
 import sys
 from models.user import User
 from databases import create_new_session
+
 
 # .pycファイルの生成を防ぐ
 sys.dont_write_bytecode = True
@@ -20,9 +23,23 @@ def create_user(user_name, user_email, user_password):
     user.email = user_email
     user.password = user_password
     user.status = "created"
-    session.add(user)
-    session.commit()
-    return 0
+    try:
+      session.add(user)
+      session.commit()
+    except IntegrityError:
+        # メールアドレスが重複した場合のエラー処理
+      session.rollback()  # トランザクションをロールバック
+      raise HTTPException(status_code=400, detail="このメールアドレスは既に使用されています。")
+
+def user_check(user_email,user_password):
+    session = create_new_session()
+    user = session.query(User).filter(User.email == user_email).first()
+    if user == None:
+        return 0
+    if user.password != user_password:
+        return 0
+    return user
+
 
 def select_user(user_id):
     session = create_new_session()
@@ -50,3 +67,5 @@ def delete_user(user_id):
     user.status = "deleted"
     session.commit()
     return 0
+
+
