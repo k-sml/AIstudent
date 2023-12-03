@@ -14,7 +14,6 @@ def create_new_topic(topic: TopicCreate):
     header = f"あなたは{topic.target}になりきって今から与えるタイトルに関する説明を受け、疑問に思うことや発展して聞きたいことを出力して下さい。\n最終的な目的は説明をしてくる相手のタイトルに関する理解を深めるために行っています。\n"
     prompt = f"{topic.title}に関する説明を今から行います。\n{topic.explain}"
     topic_id = create_topic(topic.title, topic.explain, topic.target, topic.user_id, prompt, header )
-    print('topic_id:', topic_id)
     res = first_execute_gpt_api(topic_id)
     question_id = create_first_question(topic_id, res.choices[0].message.content)
     return res, question_id

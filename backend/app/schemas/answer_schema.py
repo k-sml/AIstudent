@@ -4,6 +4,7 @@ class AnswerCreate(BaseModel):
     question_id: str
     user_id: str
     content: str
+    messages: str
 
 class AnswerResponseModel(BaseModel):
     id: str
