@@ -5,6 +5,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 
+
 const LogIn: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -47,6 +48,7 @@ const LogIn: React.FC = () => {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
+      
       <Box
         sx={{
           marginTop: 8,

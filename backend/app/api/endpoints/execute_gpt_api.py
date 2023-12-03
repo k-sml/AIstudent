@@ -4,6 +4,7 @@ from crud.answer_crud import *
 from schemas.execute_gpt_api_schema import Response
 from typing import List
 import os
+from schemas.topic_schema import Topic
 from openai import OpenAI
 from dotenv import load_dotenv
 load_dotenv()
@@ -11,8 +12,8 @@ load_dotenv()
 router = APIRouter()
 
 @router.post("/execute/{topic_id}", tags=["Execute"])
-def first_execute_gpt_api(topic_id: str):
-    topic = select_topic(topic_id)
+def first_execute_gpt_api(topic:Topic):
+    # topic = select_topic(topic_id)
     client = OpenAI(api_key=os.getenv('OPEN_API_KEY'))
     res = client.chat.completions.create(
         model = "gpt-3.5-turbo",
