@@ -45,7 +45,7 @@ export default function App() {
       const response = await apiClient.post('/api/topic', topicData);
       // APIの応答を新しいメッセージ形式に変換（例）
       const newMessage: ChatMessage[] = [
-        { role: 'system', content: `あなたは${level}になりきって今から与えるタイトルに関する説明を受け、疑問に思うことや発展して聞きたいことを出力して下さい。\n最終的な目的は説明をしてくる相手のタイトルに関する理解を深めるために行っています。\n` },
+        { role: 'system', content: `あなたは${level}の立場から今から与えるタイトルに関する説明を受け、疑問に思うことかさらに深く聞きたいことを1つ具体的にかつ簡潔に出力して下さい。\n最終的な目的は説明をしてくる相手と3回のやりとりを通じて、相手がタイトルに関する理解が確かなものかどうか確認することです。\n` },
         { role: 'user', content: `${topic}に関する説明を今から行います。\n${explanation}` },
         { role: 'assistant', content: response.data[0].choices[0].message.content },
       ];
@@ -121,10 +121,10 @@ export default function App() {
             disabled={messages.length > 0}
             required
           >
-            <MenuItem value={'student'}>学生</MenuItem>
-            <MenuItem value={'people'}>一般人</MenuItem>
-            <MenuItem value={'professional'}>同業者</MenuItem>
-            <MenuItem value={'god'}>プロフェッショナル</MenuItem>
+            <MenuItem value={'Students who know nothing'}>学生</MenuItem>
+            <MenuItem value={'Ordinary people who know common sense'}>一般人</MenuItem>
+            <MenuItem value={'Someone who has general knowledge of the field'}>同業者</MenuItem>
+            <MenuItem value={'Almighty God'}>プロフェッショナル</MenuItem>
           </Select>
         </FormControl>
         <Button variant="contained" sx={{ backgroundColor: '#0099FF' }} fullWidth type="submit">
