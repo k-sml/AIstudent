@@ -21,12 +21,10 @@ import ChatBubble from '../../components/ChatBubble';
 import { useSession } from 'next-auth/react';
 import apiClient from '@/lib/apiClient';
 
-
 interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
   content: string;
 }
-
 
 export default function App() {
   const [level, setLevel] = useState<string>('');
@@ -46,13 +44,14 @@ export default function App() {
     try {
       const response = await apiClient.post('/api/topic', topicData);
       // APIの応答を新しいメッセージ形式に変換（例）
-      const newMessage: ChatMessage = {
-        role: 'assistant',
-        content: response.data[0].choices[0].message.content,
-      };
+      const newMessage: ChatMessage[] = [
+        { role: 'system', content: `あなたは${level}になりきって今から与えるタイトルに関する説明を受け、疑問に思うことや発展して聞きたいことを出力して下さい。\n最終的な目的は説明をしてくる相手のタイトルに関する理解を深めるために行っています。\n` },
+        { role: 'user', content: `${topic}に関する説明を今から行います。\n${explanation}` },
+        { role: 'assistant', content: response.data[0].choices[0].message.content },
+      ];
       const question_id = response.data[1];
 
-      setMessages([...messages, newMessage]);
+      setMessages(newMessage);
       setQuestionID(question_id);
     }
     catch (e) {
@@ -63,19 +62,16 @@ export default function App() {
   const handleSendAnswer = async (e: React.FormEvent) => {
     e.preventDefault();
     if (answer.trim()) {
-      console.log(answer);
-      // ここでバックエンドに解答を送信し、次の質問を取得します。
-      // 以下はダミーの次の質問を追加するコードです。
       const userAnswer: ChatMessage = {
         role: 'user',
         content: answer,
       };
-      const answerData = { user_id: session?.user.id, question_id: questionId, content: userAnswer, messages: messages };
+      const answerData = { user_id: session?.user.id, question_id: questionId, content: answer, messages: messages };
       try {
         const response = await apiClient.post('/api/answer', answerData);
         const nextQuestion: ChatMessage = {
           role: 'assistant',
-          content: response.data[0].choices[0].message.content,
+          content: response.data.choices[0].message.content,
         };
         setMessages([...messages, userAnswer, nextQuestion]);
         setAnswer(''); // 解答欄をクリア

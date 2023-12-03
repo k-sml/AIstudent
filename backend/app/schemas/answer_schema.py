@@ -1,10 +1,10 @@
 from pydantic import BaseModel
 
 class AnswerCreate(BaseModel):
-    question_id: str
     user_id: str
+    question_id: str
     content: str
-    messages: str
+    messages: list
 
 class AnswerResponseModel(BaseModel):
     id: str
