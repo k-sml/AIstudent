@@ -47,6 +47,7 @@ export const options: NextAuthOptions = {
                             if(credentials?.type=="signup"){
                                 const user = {name: credentials?.name, email: credentials?.email, password: credentials?.password };
                                 const res = await apiClient.post('/api/users/',user);
+                                console.log("res",res.data);
                                 return {id: res.data.id, name: res.data.name, email: res.data.email, role: null}
                             }
                             else{
