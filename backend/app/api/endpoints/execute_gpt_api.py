@@ -1,6 +1,8 @@
 from fastapi import APIRouter
 from crud.topic_crud import *
 from crud.answer_crud import *
+from schemas.execute_gpt_api_schema import Response
+from typing import List
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -22,16 +24,16 @@ def first_execute_gpt_api(topic_id: str):
     return res
 
 @router.post("/execute/{answer_id}", tags=["Execute"])
-def execute_openai_api(answer_id: str, res: list):
+def execute_openai_api(answer_id: str, res: List[Response]):
     answer = get_answer(answer_id)
     client = OpenAI(api_key=os.getenv('OPEN_API_KEY'))
-    messages = res.append(
+    res.append(
         {"role": "user", "content": answer.content}
     )
     
     res = client.chat.completions.create(
         model = "gpt-3.5-turbo",
-        messages = messages
+        messages = res
     )
     return res
     

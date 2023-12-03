@@ -10,9 +10,7 @@ router = APIRouter()
 @router.post("/answer/",tags=['Answers'])
 def create_new_answer(answer: AnswerCreate):
     answer_id = create_answer(answer.question_id, answer.user_id, answer.content)
-    print(answer_id)
     res = execute_openai_api(answer_id, answer.messages)
-    print(res)
     return res
 
 @router.get("/answer/{question_id}",response_model=List[AnswerResponseModel],tags=['Answers'])
