@@ -4,4 +4,4 @@ use test;
 
 show tables;
 
-SELECT * FROM questions_table;
+SELECT * FROM users_table;
