@@ -36,12 +36,14 @@ export default function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [explanation, setExplanation] = useState<string>('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [topicID, setTopicID] = useState<string>('');
   const [questionId, setQuestionID] = useState<string>('');
   const [answer, setAnswer] = useState<string>('');
   const { data: session } = useSession();
   const handleChangeLevel = (event: SelectChangeEvent<string>) => {
     setLevel(event.target.value);
   }
+  const [score, setScore] = useState<string>('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,21 +54,22 @@ export default function App() {
         // { role: 'system', content: `You are to take the position of level ${level} and receive an explanation about the given title. After hearing the explanation, you are to ask only one specific and concise question that has a definitive answer. Please answer in Japanese. format is like "~~は~~ですか？"` },
         // { role: 'system', content: `You are a ${level}. Please limit your knowledge to a ${level} level. I will now provide an explanation about a certain topic. After listening to the explanation, output only one short specific point of interest in the format '~~は~~ですか?'. I am not asking you a question. Please make an only one onequestion.` },
         // { role: 'system', content: `You are a ${level}. Please limit your knowledge to a ${level} level. Please make only "one" question about topic and explanation which user serve later.` },
-        { role: 'user', content: `topic: ${topic}\nexplanation: ${explanation}` }
-    ]
+        { role: 'user', content: `topic: ${topic}\nexplanation: ${explanation}` },
+      ];
     setMessages(TopicMessage);
     try {
       setIsLoading(true);
       const response = await apiClient.post('/api/topic', topicData);
+      const question_id = response.data[1];
+      const topic_id = response.data[2];
       // APIの応答を新しいメッセージ形式に変換（例）
       const responseMessage: ChatMessage = { 
         role: 'assistant',
         content: response.data[0].choices[0].message.content,
       }
-      const question_id = response.data[1]; 
       setMessages([...TopicMessage,responseMessage]);
-
       setQuestionID(question_id);
+      setTopicID(topic_id);
     }
     catch (e) {
       console.log(e);
@@ -104,6 +107,25 @@ export default function App() {
         setIsLoading(false);
       }
     }
+  }
+
+  const handleGetEvaluation = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    const evaluationData = { user_id: session?.user.id, topic_id: topicID, res: messages }
+    try {
+      const response = await apiClient.post('/api/evaluation', evaluationData);
+      setScore(response.data.choices[0].message.content);
+      const lastMessage: ChatMessage = {
+        role: 'assistant',
+        content: `${response.data.choices[0].message.content}点です`,
+      }
+      setMessages([...messages, lastMessage]);
+    }
+    catch (e) {
+      console.log(e);
+    }
+    setIsLoading(false);
   }
 
   return (
@@ -176,37 +198,55 @@ export default function App() {
               {/* <ChatBubble owner={message.role}>
                 {message.content}
               </ChatBubble> */}
-      
-          </Box>
+            </Box>
           )
         })}
       </Box>
-      <Box mb={2} onSubmit={handleSendAnswer} component="form">
-        {messages.length > 0 && (
-          <>
-            <TextField
-              fullWidth
-              label="回答を入力"
-              variant="outlined"
-              margin="normal"
-              multiline
-              rows={4}
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              required
-            />
-            <Button
-              variant="contained"
-              sx={{ backgroundColor: '#00CC99', mt: 1 }} // 送信ボタンの上のマージンもここで設定
-              fullWidth
-              type="submit"
-              disabled={isLoading}
-            >
-              解答を送信
-            </Button>
-          </>
-        )}
-      </Box>
+      {messages.length <= 8 ? (
+        <Box mb={2} onSubmit={handleSendAnswer} component="form">
+          {messages.length > 0 && (
+            <>
+              <TextField
+                fullWidth
+                label="回答を入力"
+                variant="outlined"
+                margin="normal"
+                multiline
+                rows={4}
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                required
+              />
+              <Button
+                variant="contained"
+                sx={{ backgroundColor: '#00CC99', mt: 1 }} // 送信ボタンの上のマージンもここで設定
+                fullWidth
+                type="submit"
+                disabled={isLoading}
+              >
+                解答を送信
+              </Button>
+            </>
+          )}
+        </Box>
+      ) : (
+        <>
+          {!score && (
+            <Box mb={2} onSubmit={handleGetEvaluation} component="form">
+              <>
+                <Button
+                  variant="contained"
+                  sx={{ backgroundColor: '#00CC99', mt: 1 }} // 送信ボタンの上のマージンもここで設定                fullWidth
+                  type="submit"
+                  disabled={isLoading}
+                >
+                  評価をもらう
+                </Button>
+              </>
+            </Box>
+          )}
+        </>
+      )}
     </Container>
   );
 }

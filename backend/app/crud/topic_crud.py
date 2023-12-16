@@ -14,7 +14,6 @@ def create_topic(topic_title, topic_explain, topic_target,user_id,topic_first_pr
     topic.first_prompt = topic_first_prompt
     topic.first_header = topic_first_header
     topic.user_id = user_id
-    topic_id = topic.id
     session.add(topic)
     session.commit()
     session.refresh(topic)
