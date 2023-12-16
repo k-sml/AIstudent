@@ -47,9 +47,11 @@ export default function App() {
       const response = await apiClient.post('/api/topic', topicData);
       // APIの応答を新しいメッセージ形式に変換（例）
       const newMessage: ChatMessage[] = [
-        // { role: 'system', content: `あなたは${level}の立場から今から与えるタイトルに関する説明を受け、聞きたいことを1つだけ具体的にかつ簡潔に出力して下さい。\n最終的な目的は説明をしてくる相手と3回のやりとりを通じて、相手がタイトルに関する理解が確かなものかどうか確認することです。\n` },
-        { role: 'system', content: `You are to take the position of level ${level} and receive an explanation about the given title. After hearing the explanation, you are to ask one specific and concise question. Please answer in Japanese.` },
-        { role: 'user', content: `${topic}に関する説明を今から行います。\n${explanation}` },
+        { role: 'system', content: `あなたは${level}の立場から今から与えるトピックとそれに関する説明に対して、聞きたいことを1つだけ具体的にかつ簡潔に出力して下さい。\n最終的な目的は説明をしてくる相手と5回のやりとりを通じて、相手がタイトルに関する理解が確かなものかどうか確認することです。\n` },
+        // { role: 'system', content: `You are to take the position of level ${level} and receive an explanation about the given title. After hearing the explanation, you are to ask only one specific and concise question that has a definitive answer. Please answer in Japanese. format is like "~~は~~ですか？"` },
+        // { role: 'system', content: `You are a ${level}. Please limit your knowledge to a ${level} level. I will now provide an explanation about a certain topic. After listening to the explanation, output only one short specific point of interest in the format '~~は~~ですか?'. I am not asking you a question. Please make an only one onequestion.` },
+        // { role: 'system', content: `You are a ${level}. Please limit your knowledge to a ${level} level. Please make only "one" question about topic and explanation which user serve later.` },
+        { role: 'user', content: `topic: ${topic}\nexplanation: ${explanation}` },
         { role: 'assistant', content: response.data[0].choices[0].message.content },
       ];
       const question_id = response.data[1];
