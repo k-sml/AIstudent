@@ -11,9 +11,10 @@ const ChatBubble = styled(Paper)<ChatBubbleProps>(({ theme, owner }) => ({
   padding: theme.spacing(1),
   marginLeft: owner === 'assistant' ? 0 : 'auto',
   marginRight: owner === 'user' ? 0 : 'auto',
-  textAlign: owner === 'user' ? 'right' : 'left',
+  textAlign: 'left',
   backgroundColor: owner === 'assistant' ? theme.palette.grey[100] : theme.palette.primary.light,
   color: theme.palette.text.primary,
 }));
+
 
 export default ChatBubble;

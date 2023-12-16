@@ -16,7 +16,11 @@ import {
   ListItem,
   Card,
   CardContent,
+  Avatar,
+  Stack,
+  Paper,
 } from '@mui/material';
+import Person3RoundedIcon from '@mui/icons-material/Person3Rounded';
 import ChatBubble from '../../components/ChatBubble';
 import { useSession } from 'next-auth/react';
 import apiClient from '@/lib/apiClient';
@@ -41,53 +45,65 @@ export default function App() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+
     const topicData = { title: topic, explain: explanation, target: level, user_id: session?.user.id };
-    try {
-      const response = await apiClient.post('/api/topic', topicData);
-      // APIの応答を新しいメッセージ形式に変換（例）
-      const newMessage: ChatMessage[] = [
-        { role: 'system', content: `あなたは${level}の立場から今から与えるトピックとそれに関する説明に対して、聞きたいことを1つだけ具体的にかつ簡潔に出力して下さい。\n最終的な目的は説明をしてくる相手と5回のやりとりを通じて、相手がタイトルに関する理解が確かなものかどうか確認することです。\n` },
+    const TopicMessage:ChatMessage[] = [
+       { role: 'system', content: `あなたは${level}の立場から今から与えるトピックとそれに関する説明に対して、聞きたいことを1つだけ具体的にかつ簡潔に出力して下さい。\n最終的な目的は説明をしてくる相手と5回のやりとりを通じて、相手がタイトルに関する理解が確かなものかどうか確認することです。\n` },
         // { role: 'system', content: `You are to take the position of level ${level} and receive an explanation about the given title. After hearing the explanation, you are to ask only one specific and concise question that has a definitive answer. Please answer in Japanese. format is like "~~は~~ですか？"` },
         // { role: 'system', content: `You are a ${level}. Please limit your knowledge to a ${level} level. I will now provide an explanation about a certain topic. After listening to the explanation, output only one short specific point of interest in the format '~~は~~ですか?'. I am not asking you a question. Please make an only one onequestion.` },
         // { role: 'system', content: `You are a ${level}. Please limit your knowledge to a ${level} level. Please make only "one" question about topic and explanation which user serve later.` },
-        { role: 'user', content: `topic: ${topic}\nexplanation: ${explanation}` },
-        { role: 'assistant', content: response.data[0].choices[0].message.content },
-      ];
-      const question_id = response.data[1];
+        { role: 'user', content: `topic: ${topic}\nexplanation: ${explanation}` }
+    ]
+    setMessages(TopicMessage);
+    try {
+      setIsLoading(true);
+      const response = await apiClient.post('/api/topic', topicData);
+      // APIの応答を新しいメッセージ形式に変換（例）
+      const responseMessage: ChatMessage = { 
+        role: 'assistant',
+        content: response.data[0].choices[0].message.content,
+      }
+      const question_id = response.data[1]; 
+      setMessages([...TopicMessage,responseMessage]);
 
-      setMessages(newMessage);
       setQuestionID(question_id);
     }
     catch (e) {
       console.log(e);
     }
-    setIsLoading(false);
+    finally { 
+      setIsLoading(false);
+    }
   }
 
   const handleSendAnswer = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    
     if (answer.trim()) {
       const userAnswer: ChatMessage = {
         role: 'user',
         content: answer,
       };
+      setMessages(prevMessages => [...prevMessages, userAnswer]);
+      setAnswer(''); // 解答欄をクリア
       const answerData = { user_id: session?.user.id, question_id: questionId, content: answer, messages: messages };
       try {
+        setIsLoading(true);
         const response = await apiClient.post('/api/answer', answerData);
         const nextQuestion: ChatMessage = {
           role: 'assistant',
           content: response.data.choices[0].message.content,
         };
-        setMessages([...messages, userAnswer, nextQuestion]);
-        setAnswer(''); // 解答欄をクリア
+        setMessages(prevMessages => [...prevMessages, nextQuestion]);
+        
       }
       catch (e) {
         console.log(e);
       }
+      finally {
+        setIsLoading(false);
+      }
     }
-    setIsLoading(false);
   }
 
   return (
@@ -140,21 +156,31 @@ export default function App() {
         </Button>
       </Box>
       <Divider />
-      <List>
+      <Box>
         {messages.map((message) => {
           if (message.role === "system") {
             return null
           }
 
           return (
-            <ListItem>
-              <ChatBubble owner={message.role}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: message.role === "user" ? 'flex-end' : 'flex-start', py:1.0 }} >
+              <Stack direction="row" spacing={2} py={2}>
+                <Avatar src="../../../public/assets/ai.jpg" />
+                <Box fontWeight="fontWeightBold" sx={{ pt: 1.0 }}>
+                  {message.role}
+                </Box>
+              </Stack>
+              <Paper elevation={3} sx={{ p: 1.0, maxWidth: '80%' }}>
                 {message.content}
-              </ChatBubble>
-            </ListItem>
+              </Paper>
+              {/* <ChatBubble owner={message.role}>
+                {message.content}
+              </ChatBubble> */}
+      
+          </Box>
           )
         })}
-      </List>
+      </Box>
       <Box mb={2} onSubmit={handleSendAnswer} component="form">
         {messages.length > 0 && (
           <>
