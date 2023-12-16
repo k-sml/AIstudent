@@ -16,7 +16,7 @@ def first_execute_gpt_api(topic:Topic):
     # topic = select_topic(topic_id)
     client = OpenAI(api_key=os.getenv('OPEN_API_KEY'))
     res = client.chat.completions.create(
-        model = "gpt-3.5-turbo",
+        model = "gpt-4",
         messages = [
             {"role": "system", "content": topic.first_header},
             {"role": "user", "content": topic.first_prompt},
@@ -33,7 +33,7 @@ def execute_openai_api(answer_id: str, res: List[Response]):
     )
     
     res = client.chat.completions.create(
-        model = "gpt-3.5-turbo",
+        model = "gpt-4",
         messages = res
     )
     return res
