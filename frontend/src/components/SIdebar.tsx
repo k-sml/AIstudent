@@ -28,8 +28,11 @@ import { useSession } from 'next-auth/react';
 import { signOut } from 'next-auth/react';
 import apiClient from '@/lib/apiClient';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
+import { Badge } from '@mui/material';
 // import { Topic } from '@mui/icons-material';
-import { TopicArray } from '@/type/topic';
+import { useState } from 'react';
+import { Topic, TopicArray } from '@/type/topic';
+import { isToday,isYesterday,isOneWeekAgo,isOneMonthAgo } from '@/app/utils/date';
 
 
 const drawerWidth = 240;
@@ -89,7 +92,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 const PersistentDrawerLeft: React.FC<PersistentDrawerLeftProps> = ({ children }) => {
   const theme = useTheme();
   const { data: session } = useSession();
-  const [topics, setTopics] = React.useState<TopicArray>([]);
+  const [topics, setTopics] = useState<{ today: Topic[]; yesterday: Topic[]; oneWeekAgo: Topic[]; oneMonthAgo: Topic[]; older: Topic[]; }>();
+
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
@@ -103,9 +107,30 @@ const PersistentDrawerLeft: React.FC<PersistentDrawerLeftProps> = ({ children })
     const fetchTopics = async () => {
       try{
         const user_id = session?.user.id; // Assuming session?.user.id is your variable
+        const categorizedData = {
+          today: [] as Topic[],
+          yesterday: [] as Topic[],
+          oneWeekAgo: [] as Topic[],
+          oneMonthAgo: [] as Topic[],
+          older: [] as Topic[],
+        };
         const res = await apiClient.get(`/api/myTopics/${user_id}`);
-        setTopics(res.data);
-        console.log(res.data);
+  
+        res.data.map((topic:Topic) => {
+          if(isToday(topic.created_at)){
+            console.log(topic);
+            categorizedData.today.push(topic);
+          }else if(isYesterday(topic.created_at)){
+            categorizedData.yesterday.push(topic);
+          }else if(isOneWeekAgo(topic.created_at)){
+            categorizedData.oneWeekAgo.push(topic);
+          }else if(isOneMonthAgo(topic.created_at)){
+            categorizedData.oneMonthAgo.push(topic);
+          }else{
+            categorizedData.older.push(topic);
+          }
+        });
+        setTopics(categorizedData);
       }catch(e){
         console.log(e);
       }
@@ -171,7 +196,31 @@ const PersistentDrawerLeft: React.FC<PersistentDrawerLeftProps> = ({ children })
         </DrawerHeader>
         <Divider />
         <List>
-          {topics.map((topic, index) => (
+          <ListItem>
+            <ListItemText primary="今日" />
+          </ListItem>
+          {topics?.today.map((topic, index) => (
+      
+            <ListItem key={topic.id} disablePadding>
+              <ListItemButton>
+                  <ListItemIcon>
+                  <Badge badgeContent={""} color="primary" variant="dot">
+                    <ArticleOutlinedIcon />
+                  </Badge>
+                  </ListItemIcon>
+
+                <ListItemText primary={topic.title} />
+              </ListItemButton>
+            </ListItem>
+
+          ))}
+        </List>
+        <Divider />
+        <List>
+          <ListItem>
+            <ListItemText primary="昨日" />
+          </ListItem>
+          {topics?.yesterday.map((topic, index) => (
             <ListItem key={topic.id} disablePadding>
               <ListItemButton>
                 <ListItemIcon>
@@ -184,13 +233,32 @@ const PersistentDrawerLeft: React.FC<PersistentDrawerLeftProps> = ({ children })
         </List>
         <Divider />
         <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding>
+          <ListItem>
+            <ListItemText primary="一週間前" />
+          </ListItem>
+          {topics?.oneWeekAgo.map((topic, index) => (
+            <ListItem key={topic.id} disablePadding>
               <ListItemButton>
                 <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  <ArticleOutlinedIcon />
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText primary={topic.title} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+        <List>
+          <ListItem>
+            <ListItemText primary="一ヶ月前" />
+          </ListItem>
+          {topics?.oneMonthAgo.map((topic, index) => (
+            <ListItem key={topic.id} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  <ArticleOutlinedIcon />
+                </ListItemIcon>
+                <ListItemText primary={topic.title} />
               </ListItemButton>
             </ListItem>
           ))}

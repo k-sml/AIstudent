@@ -25,6 +25,7 @@ import ChatBubble from '../../components/ChatBubble';
 import { useSession } from 'next-auth/react';
 import apiClient from '@/lib/apiClient';
 
+
 interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
   content: string;
@@ -35,7 +36,7 @@ export default function App() {
   const [topic, setTopic] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [explanation, setExplanation] = useState<string>('');
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [apiMessages, setApiMessages] = useState<ChatMessage[]>([]);
   const [topicID, setTopicID] = useState<string>('');
   const [questionId, setQuestionID] = useState<string>('');
   const [answer, setAnswer] = useState<string>('');
@@ -56,7 +57,7 @@ export default function App() {
         // { role: 'system', content: `You are a ${level}. Please limit your knowledge to a ${level} level. Please make only "one" question about topic and explanation which user serve later.` },
         { role: 'user', content: `topic: ${topic}\nexplanation: ${explanation}` },
       ];
-    setMessages(TopicMessage);
+    setApiMessages(TopicMessage);
     try {
       setIsLoading(true);
       const response = await apiClient.post('/api/topic', topicData);
@@ -67,7 +68,7 @@ export default function App() {
         role: 'assistant',
         content: response.data[0].choices[0].message.content,
       }
-      setMessages([...TopicMessage,responseMessage]);
+      setApiMessages([...TopicMessage,responseMessage]);
       setQuestionID(question_id);
       setTopicID(topic_id);
     }
@@ -87,9 +88,9 @@ export default function App() {
         role: 'user',
         content: answer,
       };
-      setMessages(prevMessages => [...prevMessages, userAnswer]);
+      setApiMessages(prevMessages => [...prevMessages, userAnswer]);
       setAnswer(''); // 解答欄をクリア
-      const answerData = { user_id: session?.user.id, question_id: questionId, content: answer, messages: messages };
+      const answerData = { user_id: session?.user.id, question_id: questionId, content: answer, messages: apiMessages };
       try {
         setIsLoading(true);
         const response = await apiClient.post('/api/answer', answerData);
@@ -97,7 +98,7 @@ export default function App() {
           role: 'assistant',
           content: response.data.choices[0].message.content,
         };
-        setMessages(prevMessages => [...prevMessages, nextQuestion]);
+        setApiMessages(prevMessages => [...prevMessages, nextQuestion]);
         
       }
       catch (e) {
@@ -112,7 +113,7 @@ export default function App() {
   const handleGetEvaluation = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    const evaluationData = { user_id: session?.user.id, topic_id: topicID, res: messages }
+    const evaluationData = { user_id: session?.user.id, topic_id: topicID, res: apiMessages }
     try {
       const response = await apiClient.post('/api/evaluation', evaluationData);
       setScore(response.data.choices[0].message.content);
@@ -120,7 +121,7 @@ export default function App() {
         role: 'assistant',
         content: `${response.data.choices[0].message.content}点です`,
       }
-      setMessages([...messages, lastMessage]);
+      setApiMessages([...apiMessages, lastMessage]);
     }
     catch (e) {
       console.log(e);
@@ -141,7 +142,7 @@ export default function App() {
           margin="normal"
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
-          disabled={messages.length > 0}
+          disabled={apiMessages.length > 0}
           required
         />
         <TextField
@@ -153,7 +154,7 @@ export default function App() {
           onChange={(e) => setExplanation(e.target.value)}
           multiline
           rows={4}
-          disabled={messages.length > 0}
+          disabled={apiMessages.length > 0}
           required
         />
         <FormControl fullWidth margin="normal">
@@ -164,7 +165,7 @@ export default function App() {
             value={level}
             label="相手のレベル"
             onChange={handleChangeLevel}
-            disabled={messages.length > 0}
+            disabled={apiMessages.length > 0}
             required
           >
             <MenuItem value={'Students who know nothing'}>学生</MenuItem>
@@ -173,38 +174,47 @@ export default function App() {
             <MenuItem value={'Almighty God'}>プロフェッショナル</MenuItem>
           </Select>
         </FormControl>
-        <Button variant="contained" sx={{ backgroundColor: '#0099FF' }} fullWidth type="submit" disabled={messages.length > 0 || isLoading}>
+        <Button variant="contained" sx={{ backgroundColor: '#0099FF' }} fullWidth type="submit" disabled={apiMessages.length > 0 || isLoading}>
           送信
         </Button>
       </Box>
       <Divider />
       <Box>
-        {messages.map((message) => {
-          if (message.role === "system") {
-            return null
-          }
-
-          return (
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: message.role === "user" ? 'flex-end' : 'flex-start', py:1.0 }} >
+      {apiMessages.map((apiMessage, index) => (
+        (apiMessage.role === "assistant" || apiMessage.role === "user") && (
+          <Box key={index}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: apiMessage.role === "user" ? 'flex-end' : 'flex-start', py: 1.0 }}>
               <Stack direction="row" spacing={2} py={2}>
                 <Avatar src="../../../public/assets/ai.jpg" />
                 <Box fontWeight="fontWeightBold" sx={{ pt: 1.0 }}>
-                  {message.role}
+                  {apiMessage.role}
                 </Box>
               </Stack>
               <Paper elevation={3} sx={{ p: 1.0, maxWidth: '80%' }}>
-                {message.content}
+                {index === 1 ? `${topic}についての説明を行います\n ${explanation}` : apiMessage.content}
               </Paper>
-              {/* <ChatBubble owner={message.role}>
-                {message.content}
-              </ChatBubble> */}
             </Box>
+          </Box>
           )
-        })}
+        ))}
+      {isLoading && (
+        <Box>
+          <Stack direction="row" spacing={2} py={2}>
+            <Avatar src="../../../public/assets/ai.jpg" />
+            <Box fontWeight="fontWeightBold" sx={{ pt: 1.0 }}>
+              {'assistant'}
+            </Box>
+          </Stack>
+          <Paper elevation={3} sx={{ p: 1.0, maxWidth: '80%' }}>
+            AIが考え中です...
+          </Paper>
+        </Box>
+      )}
       </Box>
-      {messages.length <= 8 ? (
+
+      {apiMessages.length <= 8 ? (
         <Box mb={2} onSubmit={handleSendAnswer} component="form">
-          {messages.length > 0 && (
+          {apiMessages.length > 0 && (
             <>
               <TextField
                 fullWidth
