@@ -11,7 +11,7 @@ from api.endpoints import user_api
 from api.endpoints import topic_api
 from api.endpoints import question_api
 from api.endpoints import answer_api
-# from api.endpoints import evaluation_api
+from api.endpoints import evaluation_api
 # from api.endpoints import answer_api
 from api.endpoints import execute_gpt_api
 
@@ -27,6 +27,7 @@ app.include_router(topic_api.router, prefix="/api")
 app.include_router(question_api.router, prefix="/api")
 app.include_router(execute_gpt_api.router, prefix="/api")
 app.include_router(answer_api.router, prefix="/api")
+app.include_router(evaluation_api.router, prefix="/api")
 
 origins = ['http://localhost:3000']
 

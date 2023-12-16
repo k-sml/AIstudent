@@ -15,7 +15,7 @@ def create_new_topic(topic: TopicCreate):
     topic = create_topic(topic.title, topic.explain, topic.target, topic.user_id, prompt, header )
     res = first_execute_gpt_api(topic)
     question_id = create_first_question(topic.id, res.choices[0].message.content)
-    return res, question_id
+    return res, question_id, topic.id
  
 
 @router.get("/myTopics/{user_id}",response_model=List[TopicResponseModel],tags=['Topics'])

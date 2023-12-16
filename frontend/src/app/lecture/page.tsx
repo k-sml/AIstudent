@@ -32,12 +32,14 @@ export default function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [explanation, setExplanation] = useState<string>('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [topicID, setTopicID] = useState<string>('');
   const [questionId, setQuestionID] = useState<string>('');
   const [answer, setAnswer] = useState<string>('');
   const { data: session } = useSession();
   const handleChangeLevel = (event: SelectChangeEvent<string>) => {
     setLevel(event.target.value);
   }
+  const [score, setScore] = useState<string>('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,9 +57,11 @@ export default function App() {
         { role: 'assistant', content: response.data[0].choices[0].message.content },
       ];
       const question_id = response.data[1];
+      const topic_id = response.data[2];
 
       setMessages(newMessage);
       setQuestionID(question_id);
+      setTopicID(topic_id);
     }
     catch (e) {
       console.log(e);
@@ -86,6 +90,25 @@ export default function App() {
       catch (e) {
         console.log(e);
       }
+    }
+    setIsLoading(false);
+  }
+
+  const handleGetEvaluation = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    const evaluationData = { user_id: session?.user.id, topic_id: topicID, res: messages }
+    try {
+      const response = await apiClient.post('/api/evaluation', evaluationData);
+      setScore(response.data.choices[0].message.content);
+      const lastMessage: ChatMessage = {
+        role: 'assistant',
+        content: `${response.data.choices[0].message.content}点です`,
+      }
+      setMessages([...messages, lastMessage]);
+    }
+    catch (e) {
+      console.log(e);
     }
     setIsLoading(false);
   }
@@ -155,32 +178,51 @@ export default function App() {
           )
         })}
       </List>
-      <Box mb={2} onSubmit={handleSendAnswer} component="form">
-        {messages.length > 0 && (
-          <>
-            <TextField
-              fullWidth
-              label="回答を入力"
-              variant="outlined"
-              margin="normal"
-              multiline
-              rows={4}
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              required
-            />
-            <Button
-              variant="contained"
-              sx={{ backgroundColor: '#00CC99', mt: 1 }} // 送信ボタンの上のマージンもここで設定
-              fullWidth
-              type="submit"
-              disabled={isLoading}
-            >
-              解答を送信
-            </Button>
-          </>
-        )}
-      </Box>
+      {messages.length <= 8 ? (
+        <Box mb={2} onSubmit={handleSendAnswer} component="form">
+          {messages.length > 0 && (
+            <>
+              <TextField
+                fullWidth
+                label="回答を入力"
+                variant="outlined"
+                margin="normal"
+                multiline
+                rows={4}
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                required
+              />
+              <Button
+                variant="contained"
+                sx={{ backgroundColor: '#00CC99', mt: 1 }} // 送信ボタンの上のマージンもここで設定
+                fullWidth
+                type="submit"
+                disabled={isLoading}
+              >
+                解答を送信
+              </Button>
+            </>
+          )}
+        </Box>
+      ) : (
+        <>
+          {!score && (
+            <Box mb={2} onSubmit={handleGetEvaluation} component="form">
+              <>
+                <Button
+                  variant="contained"
+                  sx={{ backgroundColor: '#00CC99', mt: 1 }} // 送信ボタンの上のマージンもここで設定                fullWidth
+                  type="submit"
+                  disabled={isLoading}
+                >
+                  評価をもらう
+                </Button>
+              </>
+            </Box>
+          )}
+        </>
+      )}
     </Container>
   );
 }
