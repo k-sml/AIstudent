@@ -21,7 +21,7 @@ def create_new_topic(topic: TopicCreate):
 @router.get("/myTopics/{user_id}",response_model=List[TopicResponseModel],tags=['Topics'])
 def get_user_topic(user_id: str):
     topics = select_user_topic(user_id)
-    return [TopicResponseModel(id=topic.id, title=topic.title, explain=topic.explain, target=topic.target, user_id=topic.user_id) for topic in topics ]
+    return [TopicResponseModel(id=topic.id, title=topic.title, explain=topic.explain, target=topic.target, user_id=topic.user_id,created_at=topic.created_at) for topic in topics ]
 
 @router.get("/topic/{topic_id}",response_model=TopicResponseModel,tags=['Topics'])
 def get_topic(topic_id: str):

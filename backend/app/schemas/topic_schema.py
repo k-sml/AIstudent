@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+import datetime
 
 class TopicCreate(BaseModel):
     title: str
@@ -14,6 +15,7 @@ class TopicResponseModel(BaseModel):
     explain: str
     target: str
     user_id: str
+    created_at: datetime.datetime
 
 class Topic(BaseModel):
     id: str
